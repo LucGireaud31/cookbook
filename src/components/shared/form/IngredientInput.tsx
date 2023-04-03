@@ -33,7 +33,7 @@ export function IngredientInput(props: IngredientInputProps) {
     isRequired,
     withRecipes = false,
     mappedIngredients = [],
-    isMulti,
+    isMulti = false,
     ...rest
   } = props;
 
@@ -61,11 +61,11 @@ export function IngredientInput(props: IngredientInputProps) {
   const error = useFieldError("id");
 
   const [search, setSearch] = useState(
-    Array.isArray(getValues()) ? "" : (getValues() as any).name ?? ""
+    Array.isArray(getValues()) ? "" : getValues("name") ?? ""
   );
 
   const defaultId: string | string[] = useMemo(
-    () => (isMulti ? getValues("ingredients") : (getValues() as any).id),
+    () => (isMulti ? getValues("ingredients") : getValues("id")),
     []
   );
 
@@ -81,7 +81,7 @@ export function IngredientInput(props: IngredientInputProps) {
 
   const selectedId: string | string[] = isMulti
     ? watch("ingredients")
-    : (watch("id") as any);
+    : watch("id");
 
   const filteredIngredients =
     (search.length > 0
@@ -113,7 +113,9 @@ export function IngredientInput(props: IngredientInputProps) {
       setValue("image", image);
       setValue("unities", unities);
       setValue("isRecipe", isRecipe);
-      setValue("quantity.type", unities[0]);
+      if (unities.length == 1) {
+        setValue("quantity.type", unities[0]);
+      }
 
       scrollRef.current?.scrollTo({
         x: 0,
