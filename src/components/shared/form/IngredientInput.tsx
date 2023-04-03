@@ -1,4 +1,3 @@
-import { isArray } from "lodash";
 import { useMemo, useRef, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import {
@@ -91,7 +90,7 @@ export function IngredientInput(props: IngredientInputProps) {
               ? !selectedId.includes(ing.id)
               : ing.id != selectedId) &&
             (!mappedIngredients.includes(ing.id) ||
-              (isArray(defaultId)
+              (Array.isArray(defaultId)
                 ? defaultId.includes(ing.id)
                 : ing.id == defaultId)) &&
             normalize(ing.name).includes(normalize(search))

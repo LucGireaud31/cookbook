@@ -78,4 +78,5 @@ yarn-error.log
 web-build/
 dist/
 android
+ios
 # @end expo-cli
