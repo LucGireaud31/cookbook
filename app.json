@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Mon livre de recettes",
+    "slug": "front",
+    "schema": "cookbook",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gireaud.luc.cookbook"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.gireaud.luc.cookbook",
+      "versionCode": 7
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e80179d5-b0f0-4515-ad10-0e8e9f5a4e5b"
+      }
+    }
+  }
+}

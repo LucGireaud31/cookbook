@@ -1,0 +1,80 @@
+import { BarCodeEvent, BarCodeScanner } from "expo-barcode-scanner";
+import { Camera } from "expo-camera";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { StyleSheet, Text, Dimensions } from "react-native";
+import { theme } from "../../theme/colors";
+import { Modal } from "../shared/Modal";
+
+export interface ScanQrCodeModalRef {
+  onOpen(): void;
+}
+
+interface ScanQrCodeModalProps {
+  onScan(data: string): void;
+}
+
+export const ScanQrCodeModal = forwardRef<
+  ScanQrCodeModalRef,
+  ScanQrCodeModalProps
+>((props, ref) => {
+  const { onScan: onScanProps } = props;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [isScanned, setIsScanned] = useState(false);
+
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    onOpen: () => {
+      setIsOpen(true);
+      setIsScanned(false);
+      getPermission();
+    },
+  }));
+
+  async function getPermission() {
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    setHasPermission(status === "granted");
+  }
+
+  function onScan({ data }: BarCodeEvent) {
+    if (isScanned) return;
+    setIsScanned(true);
+
+    setIsOpen(false);
+    onScanProps(data);
+  }
+  if (!hasPermission) return null;
+  return (
+    <Modal
+      containerStyle={styles.modal}
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+    >
+      <BarCodeScanner onBarCodeScanned={onScan} style={styles.camera} />
+      <Text style={styles.title}>Scanner le code d'invitation</Text>
+    </Modal>
+  );
+});
+
+const styles = StyleSheet.create({
+  modal: {
+    width: Dimensions.get("screen").width - 50,
+    padding: 0,
+    overflow: "hidden",
+    backgroundColor: "transparent",
+  },
+  title: {
+    fontSize: 22,
+    padding: 5,
+    position: "absolute",
+    color: theme[400],
+    width: "100%",
+    textAlign: "center",
+    backgroundColor: "white",
+  },
+  camera: {
+    width: Dimensions.get("screen").width - 50,
+    height: Dimensions.get("screen").height * 0.7,
+  },
+});
