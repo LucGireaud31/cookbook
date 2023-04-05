@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { FilterProps } from "../../services/recipes";
 import { useTags } from "../../services/tags";
 import { Form } from "../shared/Form";
-import { IngredientInput } from "../shared/form/IngredientInput";
+import { MultiIngredientInput } from "../shared/form/MultiIngredientInput";
 import { NoteInput } from "../shared/form/NoteInput";
 import { TagInput } from "../shared/form/TagInput";
 import { Modal } from "../shared/Modal";
@@ -56,8 +56,7 @@ export const FilterModal = forwardRef<FilterModalRef, FilterModalProps>(
             subLabel={form.watch("isFavorite") ? "oui" : "non"}
             {...form.register("isFavorite")}
           /> */}
-          <IngredientInput
-            isMulti={true}
+          <MultiIngredientInput
             label="Ingredients"
             subLabel={`${nbSelectedIngredients} ${
               nbSelectedIngredients < 2

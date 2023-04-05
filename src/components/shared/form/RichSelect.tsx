@@ -20,26 +20,16 @@ import { InputFormProps, useFieldError } from "../Form";
 import { FieldContainer } from "../Form/FieldContainer";
 import { Input } from "./Input";
 
-interface IngredientInputProps extends InputFormProps {
-  withRecipes?: boolean;
+interface RichSelectProps extends InputFormProps {
   mappedIngredients?: string[];
-  isMulti?: boolean;
-  ingredientOnly?: boolean;
+  onSubmit?(unities: number[]): void;
 }
 
-export function IngredientInput(props: IngredientInputProps) {
-  const {
-    isRequired,
-    withRecipes = false,
-    mappedIngredients = [],
-    isMulti = false,
-    ...rest
-  } = props;
+export function RichSelect(props: RichSelectProps) {
+  const { isRequired, mappedIngredients = [], onSubmit, ...rest } = props;
 
   const { data } = useIngredients();
-  const { data: dependencies } = withRecipes
-    ? useAllMiniRecipes()
-    : { data: [] };
+  const { data: dependencies } = useAllMiniRecipes();
 
   const ingredients = useMemo(
     () => [
@@ -53,23 +43,16 @@ export function IngredientInput(props: IngredientInputProps) {
     [data, dependencies]
   );
 
-  const { setValue, getValues, watch } = useFormContext<
-    TRecipeIngredient | { ingredients: string[] }
-  >();
+  const { setValue, getValues, watch } = useFormContext<TRecipeIngredient>();
 
   const error = useFieldError("id");
 
-  const [search, setSearch] = useState(
-    Array.isArray(getValues()) ? "" : getValues("name") ?? ""
-  );
+  const [search, setSearch] = useState(getValues("name") ?? "");
 
-  const defaultId: string | string[] = useMemo(
-    () => (isMulti ? getValues("ingredients") : getValues("id")),
-    []
-  );
+  const defaultId = useMemo(() => getValues("id"), []);
 
   useController({
-    name: isMulti ? "ingredients" : "id",
+    name: "id",
     rules: {
       required: isRequired,
     },
@@ -78,21 +61,14 @@ export function IngredientInput(props: IngredientInputProps) {
   const inputRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
 
-  const selectedId: string | string[] = isMulti
-    ? watch("ingredients")
-    : watch("id");
+  const selectedId = watch("id");
 
   const filteredIngredients =
     (search.length > 0
       ? ingredients?.filter(
           (ing) =>
-            (Array.isArray(selectedId)
-              ? !selectedId.includes(ing.id)
-              : ing.id != selectedId) &&
-            (!mappedIngredients.includes(ing.id) ||
-              (Array.isArray(defaultId)
-                ? defaultId.includes(ing.id)
-                : ing.id == defaultId)) &&
+            ing.id != selectedId &&
+            (!mappedIngredients.includes(ing.id) || ing.id == defaultId) &&
             normalize(ing.name).includes(normalize(search))
         )
       : null) ?? [];
@@ -104,38 +80,25 @@ export function IngredientInput(props: IngredientInputProps) {
     unities: number[],
     isRecipe: boolean
   ) {
-    if (isMulti) {
-      setValue("ingredients", [...(getValues("ingredients") as string[]), id]);
-    } else {
-      setValue("id", id);
-      setValue("name", name);
-      setValue("image", image);
-      setValue("unities", unities);
-      setValue("isRecipe", isRecipe);
-      if (unities.length == 1) {
-        setValue("quantity.type", unities[0]);
-      }
-
-      scrollRef.current?.scrollTo({
-        x: 0,
-        animated: true,
-      });
-
-      if (name != "") inputRef.current?.blur();
+    setValue("id", id);
+    setValue("name", name);
+    setValue("image", image);
+    setValue("isRecipe", isRecipe);
+    if (unities.length == 0) {
+      setValue("quantity.type", unities[0]);
     }
-  }
 
-  function handleDeleteIngredient(id: string) {
-    if (isMulti) {
-      setValue(
-        "ingredients",
-        getValues("ingredients").filter((i) => i != id)
-      );
-    }
+    scrollRef.current?.scrollTo({
+      x: 0,
+      animated: true,
+    });
+
+    if (name != "") inputRef.current?.blur();
+    onSubmit?.(unities);
   }
 
   function onSubmitEditing() {
-    if (!isMulti && filteredIngredients.length == 1 && selectedId == "") {
+    if (filteredIngredients.length == 1 && selectedId == "") {
       const ing = filteredIngredients[0];
 
       handleIngredientPress(
@@ -163,14 +126,14 @@ export function IngredientInput(props: IngredientInputProps) {
           inputRef={inputRef}
           style={{
             ...styles.input,
-            ...(selectedId != "" && !isMulti && { color: theme[400] }),
+            ...(selectedId != "" && { color: theme[400] }),
           }}
           onSubmitEditing={onSubmitEditing}
           value={search}
           onChangeText={(text) => {
             setSearch(text);
 
-            if (!isMulti && selectedId != "" && text != getValues("name")) {
+            if (selectedId != "" && text != getValues("name")) {
               handleIngredientPress("", "", "", [], false);
               setSearch("");
             }
@@ -189,7 +152,7 @@ export function IngredientInput(props: IngredientInputProps) {
             isError && { borderColor: "red", borderTopWidth: 2 },
           ]}
         >
-          {!isMulti && getValues("id") != "" && (
+          {getValues("id") != "" && (
             <Ingredient
               name={getValues("name")}
               image={getValues("image")}
@@ -197,22 +160,6 @@ export function IngredientInput(props: IngredientInputProps) {
               isRecipe={getValues("isRecipe")}
             />
           )}
-          {isMulti &&
-            getValues("ingredients")?.map((id) => {
-              const ing = ingredients.find((i) => i.id == id);
-
-              if (!ing) return null;
-              return (
-                <Ingredient
-                  key={ing.id}
-                  name={ing.name}
-                  image={ing.image}
-                  onPress={() => handleDeleteIngredient(ing.id)}
-                  isRecipe={ing.isRecipe}
-                  isSelected={true}
-                />
-              );
-            })}
           {filteredIngredients.map((ing) => (
             <Ingredient
               key={ing.id}
@@ -226,7 +173,7 @@ export function IngredientInput(props: IngredientInputProps) {
                   ing.unities,
                   ing.isRecipe
                 );
-                !isMulti && setSearch(ing.name);
+                setSearch(ing.name);
               }}
               isRecipe={ing.isRecipe}
               isSelected={false}

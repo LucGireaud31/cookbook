@@ -5,10 +5,10 @@ import { TRecipeIngredient } from "../../types/ingredients";
 import { RecipeQuantityTypeEnum } from "../../types/recipe";
 import { ingredientsUnitOptions } from "../../utils/ingredientQuantityType";
 import { Form } from "../shared/Form";
-import { IngredientInput } from "../shared/form/IngredientInput";
 import { Input } from "../shared/form/Input";
 import { Select } from "../shared/form/Select";
 import { Modal } from "../shared/Modal";
+import { RichSelect } from "../shared/form/RichSelect";
 
 export interface ModalAddIngredientToRecipeRef {
   onOpen(ingredient?: TRecipeIngredient): void;
@@ -35,7 +35,6 @@ const DEFAULT_INGREDIENT = {
   name: "",
   image: "",
   quantity: undefined,
-  unities: undefined,
   isRecipe: false,
 };
 
@@ -47,6 +46,8 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const [unities, setUnities] = useState<number[]>([]);
+
   const [defaultIngredient, setDefaultIngredient] =
     useState<TRecipeIngredient>();
   const form = useForm<TRecipeIngredient>();
@@ -56,11 +57,9 @@ export const ModalAddIngredientToRecipe = forwardRef<
       setIsOpen(true);
       setDefaultIngredient(ingredient);
 
+      setUnities(ingredient?.isRecipe ? [ingredient.quantity.type] : []);
       if (ingredient) {
-        form.reset({
-          ...ingredient,
-          ...(ingredient.isRecipe && { unities: [ingredient.quantity.type] }),
-        });
+        form.reset(ingredient);
       } else {
         form.reset(DEFAULT_INGREDIENT);
       }
@@ -86,7 +85,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   const isRecipe = form.getValues("isRecipe");
 
-  const isDisabled = isRecipe || (form.getValues("unities")?.length ?? 0) == 0;
+  const isDisabled = isRecipe || (unities.length ?? 0) == 0;
   return (
     <Modal
       isOpen={isOpen}
@@ -96,11 +95,11 @@ export const ModalAddIngredientToRecipe = forwardRef<
       submitButtonLabel="Ajouter"
     >
       <Form form={form}>
-        <IngredientInput
+        <RichSelect
           label="Ingrédient"
           isRequired
-          withRecipes={true}
           mappedIngredients={mappedIngredients}
+          onSubmit={setUnities}
         />
         <Select
           label="Unité"
@@ -108,7 +107,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
           isRequired
           data={[
             ...(isRecipe ? RECIPE_UNIT_OPTIONS : ingredientsUnitOptions),
-          ].filter((u) => form.getValues("unities")?.includes(parseInt(u.key)))}
+          ].filter((u) => unities.includes(parseInt(u.key)))}
           isDisabled={isDisabled}
           {...form.register("quantity.type")}
         />
