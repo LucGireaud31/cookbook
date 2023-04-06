@@ -118,8 +118,10 @@ export const ModalAddIngredientToRecipe = forwardRef<
           placeholder="Aucune unité sélectionée..."
           isRequired
           data={[
-            ...(isRecipe ? RECIPE_UNIT_OPTIONS : ingredientsUnitOptions),
-          ].filter((u) => unities.includes(parseInt(u.key)))}
+            ...(isRecipe
+              ? RECIPE_UNIT_OPTIONS
+              : ingredientsUnitOptions(unities)),
+          ]} //.filter((u) => unities.includes(parseInt(u.key)))}
           isDisabled={isDisabled}
           {...form.register("quantity.type")}
         />

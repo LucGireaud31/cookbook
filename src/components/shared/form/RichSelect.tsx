@@ -84,14 +84,14 @@ export function RichSelect(props: RichSelectProps) {
     setValue("name", name);
     setValue("image", image);
     setValue("isRecipe", isRecipe);
-    // if (unities.length == 1) {
-    //   setValue("quantity.type", unities[0]);
-    // }
+    if (unities.length == 1) {
+      setValue("quantity.type", unities[0]);
+    }
     scrollRef.current?.scrollTo({
       x: 0,
       animated: true,
     });
-    // if (name != "") inputRef.current?.blur();
+    if (name != "") inputRef.current?.blur();
     onSubmit?.(unities);
   }
 

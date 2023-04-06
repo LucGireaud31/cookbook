@@ -54,13 +54,50 @@ export function formatIngredientName(
   }
 }
 
-export const ingredientsUnitOptions = [
-  { key: IngredientQuantityType.Gr.toString(), label: "Grammes" },
-  { key: IngredientQuantityType.Unit.toString(), label: "À l'unité" },
-  { key: IngredientQuantityType.Ml.toString(), label: "Ml" },
-  { key: IngredientQuantityType.Cl.toString(), label: "Cl" },
-  { key: IngredientQuantityType.Pinch.toString(), label: "Pincée" },
-  { key: IngredientQuantityType.Handle.toString(), label: "Poignée" },
-  { key: IngredientQuantityType.CAC.toString(), label: "Cuillère à café" },
-  { key: IngredientQuantityType.CAS.toString(), label: "Cuillère à soupe" },
-];
+export function ingredientsUnitOptions(
+  unities: number[]
+): { key: string; label: string }[] {
+  return unities
+    .map((u) => {
+      switch (u) {
+        case 0:
+          return {
+            key: IngredientQuantityType.Unit.toString(),
+            label: "À l'unité",
+          };
+        case 1:
+          return { key: IngredientQuantityType.Ml.toString(), label: "Ml" };
+
+        case 2:
+          return { key: IngredientQuantityType.Cl.toString(), label: "Cl" };
+        case 3:
+          return {
+            key: IngredientQuantityType.Gr.toString(),
+            label: "Grammes",
+          };
+        case 4:
+          return {
+            key: IngredientQuantityType.CAS.toString(),
+            label: "Cuillère à soupe",
+          };
+        case 5:
+          return {
+            key: IngredientQuantityType.CAC.toString(),
+            label: "Cuillère à café",
+          };
+        case 6:
+          return {
+            key: IngredientQuantityType.Pinch.toString(),
+            label: "Pincée",
+          };
+        case 7:
+          return {
+            key: IngredientQuantityType.Handle.toString(),
+            label: "Poignée",
+          };
+        default:
+          return null;
+      }
+    })
+    .filter(Boolean) as any;
+}
