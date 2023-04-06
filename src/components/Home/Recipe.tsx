@@ -1,4 +1,11 @@
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
 import { gray, theme } from "../../theme/colors";
 import { TRecipeItem } from "../../types/recipe";
@@ -31,9 +38,11 @@ export function Recipe(props: RecipeProps) {
   );
 }
 
+const recipeWidth = Dimensions.get("window").width / 3 - 10;
+
 const styles = StyleSheet.create({
   container: {
-    width: "33%",
+    width: recipeWidth,
     alignItems: "center",
     marginVertical: 15,
   },
@@ -59,8 +68,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   imageContainer: {
-    height: 110,
-    width: 110,
+    width: recipeWidth * 0.8,
+    height: recipeWidth * 0.8,
     backgroundColor: theme[400],
     borderRadius: 25,
     justifyContent: "center",

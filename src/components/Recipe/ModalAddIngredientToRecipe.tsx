@@ -9,6 +9,7 @@ import { Input } from "../shared/form/Input";
 import { Select } from "../shared/form/Select";
 import { Modal } from "../shared/Modal";
 import { RichSelect } from "../shared/form/RichSelect";
+import { useIngredients } from "../../services/ingredients";
 
 export interface ModalAddIngredientToRecipeRef {
   onOpen(ingredient?: TRecipeIngredient): void;
@@ -48,6 +49,8 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   const [unities, setUnities] = useState<number[]>([]);
 
+  const { data: ingredients } = useIngredients();
+
   const [defaultIngredient, setDefaultIngredient] =
     useState<TRecipeIngredient>();
   const form = useForm<TRecipeIngredient>();
@@ -57,7 +60,15 @@ export const ModalAddIngredientToRecipe = forwardRef<
       setIsOpen(true);
       setDefaultIngredient(ingredient);
 
-      setUnities(ingredient?.isRecipe ? [ingredient.quantity.type] : []);
+      setUnities(
+        ingredient?.isRecipe
+          ? [ingredient.quantity.type]
+          : ingredient?.unities?.map((u) => u.valueOf()) ??
+              ingredients
+                ?.find((i) => i.id == ingredient?.id)
+                ?.unities.map((u) => u.valueOf()) ??
+              []
+      );
       if (ingredient) {
         form.reset(ingredient);
       } else {
@@ -68,6 +79,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   function handleSubmit(values: TRecipeIngredient) {
     setIsOpen(false);
+
     const newValues = {
       ...values,
       quantity: {
@@ -92,7 +104,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
       onClose={() => setIsOpen(false)}
       title="Ingrédient"
       onSubmit={form.handleSubmit(handleSubmit)}
-      submitButtonLabel="Ajouter"
+      submitButtonLabel={defaultIngredient ? "Modifier" : "Ajouter"}
     >
       <Form form={form}>
         <RichSelect

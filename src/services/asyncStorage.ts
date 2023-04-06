@@ -28,6 +28,7 @@ export async function getFilterLocalStorage(): Promise<FilterProps> {
       ...JSON.parse((await AsyncStorage.getItem(KeysEnum.Filter)) ?? ""),
     };
   } catch {
+    setFilterLocalStorage(DEFAULT_FILTER);
     return DEFAULT_FILTER;
   }
 }
@@ -35,6 +36,7 @@ export async function getPageLocalStorage(): Promise<number> {
   try {
     return parseInt((await AsyncStorage.getItem(KeysEnum.Page)) ?? "1");
   } catch {
+    setPageLocalStorage(1);
     return 1;
   }
 }
