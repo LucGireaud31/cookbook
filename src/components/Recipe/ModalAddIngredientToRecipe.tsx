@@ -47,7 +47,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [unities, setUnities] = useState<number[]>([]);
+  // const [unities, setUnities] = useState<number[]>([]);
 
   const { data: ingredients } = useIngredients();
 
@@ -60,15 +60,15 @@ export const ModalAddIngredientToRecipe = forwardRef<
       setIsOpen(true);
       setDefaultIngredient(ingredient);
 
-      setUnities(
-        ingredient?.isRecipe
-          ? [ingredient.quantity.type]
-          : ingredient?.unities?.map((u) => u.valueOf()) ??
-              ingredients
-                ?.find((i) => i.id == ingredient?.id)
-                ?.unities.map((u) => u.valueOf()) ??
-              []
-      );
+      // setUnities(
+      //   ingredient?.isRecipe
+      //     ? [ingredient.quantity.type]
+      //     : ingredient?.unities?.map((u) => u.valueOf()) ??
+      //         ingredients
+      //           ?.find((i) => i.id == ingredient?.id)
+      //           ?.unities.map((u) => u.valueOf()) ??
+      //         []
+      // );
       if (ingredient) {
         form.reset(ingredient);
       } else {
@@ -97,7 +97,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   const isRecipe = form.getValues("isRecipe");
 
-  const isDisabled = isRecipe || (unities.length ?? 0) == 0;
+  const isDisabled = isRecipe; /*|| (unities.length ?? 0) == 0*/
   return (
     <Modal
       isOpen={isOpen}
@@ -111,17 +111,13 @@ export const ModalAddIngredientToRecipe = forwardRef<
           label="Ingrédient"
           isRequired
           mappedIngredients={mappedIngredients}
-          onSubmit={setUnities}
+          //onSubmit={setUnities}
         />
         <Select
           label="Unité"
           placeholder="Aucune unité sélectionée..."
           isRequired
-          data={[
-            ...(isRecipe
-              ? RECIPE_UNIT_OPTIONS
-              : ingredientsUnitOptions(unities)),
-          ]} //.filter((u) => unities.includes(parseInt(u.key)))}
+          data={[...(isRecipe ? RECIPE_UNIT_OPTIONS : ingredientsUnitOptions)]} //.filter((u) => unities.includes(parseInt(u.key)))}
           isDisabled={isDisabled}
           {...form.register("quantity.type")}
         />

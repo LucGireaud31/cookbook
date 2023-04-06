@@ -26,7 +26,7 @@ interface RichSelectProps extends InputFormProps {
 }
 
 export function RichSelect(props: RichSelectProps) {
-  const { isRequired, mappedIngredients = [], onSubmit, ...rest } = props;
+  const { isRequired, mappedIngredients = [], ...rest } = props;
 
   const { data } = useIngredients();
   const { data: dependencies } = useAllMiniRecipes();
@@ -92,7 +92,7 @@ export function RichSelect(props: RichSelectProps) {
       animated: true,
     });
     if (name != "") inputRef.current?.blur();
-    onSubmit?.(unities);
+    // onSubmit?.(unities);
   }
 
   function onSubmitEditing() {

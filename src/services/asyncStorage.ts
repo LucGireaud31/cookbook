@@ -6,6 +6,7 @@ enum KeysEnum {
   Page = "page",
   Token = "token",
   Login = "login",
+  NeedToUpdated = "needToUpdate",
 }
 
 // ---------- //
@@ -57,6 +58,16 @@ export async function getLoginLocalStorage(): Promise<string | null> {
   }
 }
 
+export async function getNeedUpdateStorage(): Promise<boolean> {
+  try {
+    const res = await AsyncStorage.getItem(KeysEnum.NeedToUpdated);
+    if (res == "false") return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ---------- //
 // --Set-- //
 // ---------- //
@@ -83,5 +94,11 @@ export async function setTokenLocalStorage(token: string | null) {
     } else {
       await AsyncStorage.removeItem(KeysEnum.Token);
     }
+  } catch {}
+}
+
+export async function setNeedUpdateStorage(need: boolean) {
+  try {
+    AsyncStorage.setItem(KeysEnum.NeedToUpdated, need ? "true" : "false");
   } catch {}
 }

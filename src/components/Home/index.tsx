@@ -17,12 +17,16 @@ import { queryGetTags } from "../../services/tags";
 import { useForm } from "react-hook-form";
 import {
   getFilterLocalStorage,
+  getNeedUpdateStorage,
   getPageLocalStorage,
   setFilterLocalStorage,
+  setNeedUpdateStorage,
   setPageLocalStorage,
 } from "../../services/asyncStorage";
 import { Form } from "../shared/Form";
 import { atom, useAtomValue } from "jotai";
+import { Modal } from "../shared/Modal";
+import { A } from "@expo/html-elements";
 
 const LIST_SIZE = 20;
 
@@ -31,6 +35,8 @@ export const filterAtom = atom<FilterProps | null>(null);
 export function Home() {
   const [page, setPage] = useState(1);
   const [pageMax, setPageMax] = useState(1);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const navigation = useNavigation();
 
@@ -112,6 +118,13 @@ export function Home() {
       setPage(page);
 
       onRefetch(page);
+
+      const need = await getNeedUpdateStorage();
+      console.log(need);
+      if (need) {
+        setIsOpen(true);
+        setNeedUpdateStorage(false);
+      }
     })();
   }, []);
 
@@ -203,6 +216,18 @@ export function Home() {
           onClose={() => setIsFilterOpen(false)}
         />
       </View>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Mise à jour importante"
+      >
+        <A
+          href="https://play.google.com/store/apps/details?id=com.gireaud.luc.cookbook"
+          style={{ textDecorationLine: "underline" }}
+        >
+          Rdv sur play store pour faire la mise à jour svp
+        </A>
+      </Modal>
     </Form>
   );
 }
