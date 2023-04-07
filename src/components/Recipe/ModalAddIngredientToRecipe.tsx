@@ -9,7 +9,6 @@ import { Input } from "../shared/form/Input";
 import { Select } from "../shared/form/Select";
 import { Modal } from "../shared/Modal";
 import { RichSelect } from "../shared/form/RichSelect";
-import { useIngredients } from "../../services/ingredients";
 
 export interface ModalAddIngredientToRecipeRef {
   onOpen(ingredient?: TRecipeIngredient): void;
@@ -49,7 +48,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   // const [unities, setUnities] = useState<number[]>([]);
 
-  const { data: ingredients } = useIngredients();
+  // const { data: ingredients } = useIngredients();
 
   const [defaultIngredient, setDefaultIngredient] =
     useState<TRecipeIngredient>();
@@ -98,6 +97,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
   const isRecipe = form.getValues("isRecipe");
 
   const isDisabled = isRecipe; /*|| (unities.length ?? 0) == 0*/
+
   return (
     <Modal
       isOpen={isOpen}

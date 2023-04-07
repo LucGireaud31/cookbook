@@ -11,7 +11,6 @@ import {
   TextInputProps,
   View,
 } from "react-native";
-import { InfoIcon, ScanIcon } from "../../icons/icons";
 import { useFieldError } from "../Form";
 import { FieldContainer } from "../Form/FieldContainer";
 import { DumpbTextInput } from "./DumbTextInput";
@@ -34,6 +33,8 @@ export interface InputProps extends TextInputProps {
   rightAddon?: ReactNode;
 }
 
+const regexNumber = new RegExp(/^[0-9]\d*(\.\d+)?$/);
+
 export function Input(props: InputProps) {
   const {
     label,
@@ -55,6 +56,9 @@ export function Input(props: InputProps) {
     rules: {
       ...rules,
       required: isRequired,
+      ...(type == "numeric" && {
+        validate: (value) => regexNumber.test(value.toString()),
+      }),
     },
     name,
   });
@@ -66,7 +70,10 @@ export function Input(props: InputProps) {
       label={label}
       error={error}
       isRequired={isRequired}
-      rules={rules}
+      rules={{
+        ...rules,
+        ...(type == "numeric" && { customMessage: "Le nombre est invalide" }),
+      }}
       info={info}
     >
       <View>
@@ -79,6 +86,8 @@ export function Input(props: InputProps) {
             if (type == "numeric") {
               const res = parseFloat(text);
               if (isNaN(res)) {
+                field.onChange(text);
+              } else if (!regexNumber.test(text.toString())) {
                 field.onChange(text);
               } else {
                 field.onChange(res);

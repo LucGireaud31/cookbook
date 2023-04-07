@@ -204,7 +204,11 @@ export function Recipe(props: RecipeProps) {
                     ing.name,
                     ing.plural,
                     ing.quantity.type,
-                    ing.quantity.value
+                    roundNumber(
+                      (ing.quantity.value * quantityCpt) /
+                        (recipe.quantity?.value ?? 1),
+                      1
+                    )
                   )}
                   leftIcon={
                     <Image style={styles.image} source={{ uri: ing.image }} />
@@ -216,7 +220,9 @@ export function Recipe(props: RecipeProps) {
                         (recipe.quantity?.value ?? 1),
                       1
                     )
-                  ).toString()}
+                  )
+                    .toString()
+                    .replace(".", ",")}
                 />
               ))}
             </View>

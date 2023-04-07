@@ -38,6 +38,7 @@ export function RichSelect(props: RichSelectProps) {
         ...d,
         isRecipe: true,
         unities: [d.quantity?.type ?? RecipeQuantityTypeEnum.Personns],
+        plural: d.name,
       })) ?? []),
     ],
     [data, dependencies]
@@ -78,7 +79,8 @@ export function RichSelect(props: RichSelectProps) {
     name: string,
     image: string,
     unities: number[],
-    isRecipe: boolean
+    isRecipe: boolean,
+    plural: string
   ) {
     setValue("id", id);
     setValue("name", name);
@@ -87,6 +89,8 @@ export function RichSelect(props: RichSelectProps) {
     if (unities.length == 1) {
       setValue("quantity.type", unities[0]);
     }
+    setValue("plural", plural ?? name);
+
     scrollRef.current?.scrollTo({
       x: 0,
       animated: true,
@@ -104,7 +108,8 @@ export function RichSelect(props: RichSelectProps) {
         ing.name,
         ing.image,
         ing.unities,
-        ing.isRecipe
+        ing.isRecipe,
+        (ing as any).plural
       );
       setSearch(ing.name);
     }
@@ -132,7 +137,7 @@ export function RichSelect(props: RichSelectProps) {
             setSearch(text);
 
             if (selectedId != "" && text != getValues("name")) {
-              handleIngredientPress("", "", "", [], false);
+              handleIngredientPress("", "", "", [], false, "");
               setSearch("");
             }
           }}
@@ -169,7 +174,8 @@ export function RichSelect(props: RichSelectProps) {
                   ing.name,
                   ing.image,
                   ing.unities,
-                  ing.isRecipe
+                  ing.isRecipe,
+                  (ing as any).plural
                 );
                 setSearch(ing.name);
               }}
