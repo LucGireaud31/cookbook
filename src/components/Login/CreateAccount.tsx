@@ -8,6 +8,7 @@ import { ScanIcon } from "../icons/icons";
 import { Button } from "../shared/Button";
 import { Form } from "../shared/Form";
 import { Input } from "../shared/form/Input";
+import { InputPassword } from "../shared/form/InputPassword";
 import { IconButton } from "../shared/IconButton";
 import { LoginContainer } from "./LoginContainer";
 import { ScanQrCodeModal, ScanQrCodeModalRef } from "./ScanQrCodeModal";
@@ -77,7 +78,7 @@ export function CreateAccount(props: CreateAccountProps) {
           }}
           info="Le mail sera seulement utilisé en cas de perte mot de passe. Il ne sera en aucun cas utilisé à des fins commerciaux où pour de la publicité."
         />
-        <Input
+        <InputPassword
           inputRef={input3}
           style={styles.input}
           label="Mot de passe"
@@ -90,7 +91,7 @@ export function CreateAccount(props: CreateAccountProps) {
             minLength: 6,
           }}
         />
-        <Input
+        <InputPassword
           inputRef={input4}
           style={styles.input}
           label="Resaisir le mot de passe"

@@ -47,6 +47,7 @@ export function Input(props: InputProps) {
     rules,
     info,
     rightAddon,
+    style,
     ...rest
   } = props;
 
@@ -62,7 +63,7 @@ export function Input(props: InputProps) {
     },
     name,
   });
-
+  console.log(rest.secureTextEntry);
   const isError = error != null;
   return (
     <FieldContainer
@@ -97,6 +98,7 @@ export function Input(props: InputProps) {
             }
             rest.onChangeText?.(text);
           }}
+          style={{ ...(style as any), ...(rightAddon && { paddingRight: 40 }) }}
           {...rest}
         />
         {rightAddon && (

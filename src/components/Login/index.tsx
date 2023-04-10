@@ -17,6 +17,7 @@ import { Input } from "../shared/form/Input";
 import { useEffect, useRef } from "react";
 import { useNavigation } from "../../hooks/useNavigation";
 import { LoginContainer } from "./LoginContainer";
+import { InputPassword } from "../shared/form/InputPassword";
 
 interface LoginProps {}
 
@@ -27,7 +28,7 @@ export function Login(props: LoginProps) {
     defaultValues: { login: "", password: "" },
   });
 
-  const login = useLogin();
+  const doLogin = useLogin();
   const setToken = useSetAtom(tokenAtom);
 
   const { navigate } = useNavigation();
@@ -35,9 +36,12 @@ export function Login(props: LoginProps) {
   const inputRef2 = useRef<TextInput>(null);
 
   async function onSubmit(values: TCredentials) {
-    const data = await login({
-      login: values.login,
-      password: values.password.toString(),
+    const login = values.login.trim();
+    const password = values.password.trim();
+
+    const data = await doLogin({
+      login,
+      password,
     });
 
     const token = data?.data;
@@ -53,7 +57,7 @@ export function Login(props: LoginProps) {
       });
     } else if (token) {
       setTokenLocalStorage(token);
-      setLoginLocalStorage(values.login);
+      setLoginLocalStorage(login);
       setToken(token);
     } else {
       Toast.show({
@@ -81,7 +85,7 @@ export function Login(props: LoginProps) {
           returnKeyType="next"
           style={styles.input}
         />
-        <Input
+        <InputPassword
           inputRef={inputRef2}
           label="Mot de passe"
           isRequired
