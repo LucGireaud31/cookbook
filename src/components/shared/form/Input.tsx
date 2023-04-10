@@ -63,7 +63,7 @@ export function Input(props: InputProps) {
     },
     name,
   });
-  console.log(rest.secureTextEntry);
+
   const isError = error != null;
   return (
     <FieldContainer

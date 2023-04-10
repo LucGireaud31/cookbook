@@ -5,7 +5,7 @@ export const ENV = {
   // Used for set password
   MODE: "PROD", //"DEV"
   API: {
-    URL: `${prodBase}/graphql`,
-    UPLOADURL: `${prodBase}/cloud`,
+    URL: `${devBase}/graphql`,
+    UPLOADURL: `${devBase}/cloud`,
   },
 };

@@ -7,7 +7,7 @@ export function InputPassword(props: InputProps) {
   const { ...rest } = props;
 
   const [visible, setVisible] = useState(false);
-  console.log(!visible);
+
   return (
     <Input
       autoCapitalize="none"

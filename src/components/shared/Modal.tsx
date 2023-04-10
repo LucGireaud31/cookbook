@@ -32,6 +32,7 @@ interface ModalComponentProps extends ModalProps {
   button2Style?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
   overlayStyle?: StyleProp<ViewStyle>;
+  isSubmitting?: boolean;
 }
 
 export function Modal(props: ModalComponentProps) {
@@ -51,6 +52,7 @@ export function Modal(props: ModalComponentProps) {
     overlayStyle = {},
     button2Label = "Annuler",
     button2Style = {},
+    isSubmitting = false,
     ...rest
   } = props;
 
@@ -84,6 +86,7 @@ export function Modal(props: ModalComponentProps) {
           {onSubmit && (
             <Button
               onPress={onSubmit}
+              isSubmiting={isSubmitting}
               style={{ ...styles.button, ...(buttonStyle as any) }}
             >
               {submitButtonLabel}

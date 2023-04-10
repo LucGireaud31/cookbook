@@ -9,6 +9,11 @@ import { Input } from "../shared/form/Input";
 import { Select } from "../shared/form/Select";
 import { Modal } from "../shared/Modal";
 import { RichSelect } from "../shared/form/RichSelect";
+import {
+  useCreateIngredient,
+  useIngredients,
+} from "../../services/ingredients";
+import { lastValueOf } from "../../utils/list";
 
 export interface ModalAddIngredientToRecipeRef {
   onOpen(ingredient?: TRecipeIngredient): void;
@@ -48,7 +53,8 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   // const [unities, setUnities] = useState<number[]>([]);
 
-  // const { data: ingredients } = useIngredients();
+  const { data: ingredients } = useIngredients();
+  const createIngredient = useCreateIngredient();
 
   const [defaultIngredient, setDefaultIngredient] =
     useState<TRecipeIngredient>();
@@ -76,7 +82,21 @@ export const ModalAddIngredientToRecipe = forwardRef<
     },
   }));
 
-  function handleSubmit(values: TRecipeIngredient) {
+  async function handleSubmit(ing: TRecipeIngredient) {
+    let values = ing;
+    if (ingredients?.filter((i) => i.id == values.id).length == 0) {
+      // Need to create this new ingredient
+      const imageName = lastValueOf(values.image.split("/"));
+      if (!imageName) return;
+
+      const newIngredient = await createIngredient(
+        values.name,
+        imageName,
+        values.unities ?? []
+      );
+      if (newIngredient) values.id = newIngredient?.id;
+    }
+
     setIsOpen(false);
 
     const newValues = {
@@ -104,6 +124,7 @@ export const ModalAddIngredientToRecipe = forwardRef<
       onClose={() => setIsOpen(false)}
       title="Ingrédient"
       onSubmit={form.handleSubmit(handleSubmit)}
+      isSubmitting={form.formState.isSubmitting}
       submitButtonLabel={defaultIngredient ? "Modifier" : "Ajouter"}
     >
       <Form form={form}>

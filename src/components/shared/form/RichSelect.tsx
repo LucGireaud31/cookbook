@@ -1,3 +1,4 @@
+import { capitalize } from "lodash";
 import { useMemo, useRef, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import {
@@ -9,11 +10,13 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { ENV } from "../../../../env";
 import { useIngredients } from "../../../services/ingredients";
 import { useAllMiniRecipes } from "../../../services/recipes";
 import { theme } from "../../../theme/colors";
 import { TRecipeIngredient } from "../../../types/ingredients";
 import { RecipeQuantityTypeEnum } from "../../../types/recipe";
+import { generateShortUID } from "../../../utils/crypto";
 import { normalize, wrapText } from "../../../utils/string";
 import { GlassIcon } from "../../icons/icons";
 import { InputFormProps, useFieldError } from "../Form";
@@ -64,6 +67,8 @@ export function RichSelect(props: RichSelectProps) {
 
   const selectedId = watch("id");
 
+  const [isCreatingIngredient, setIsCreatedIngredient] = useState(false);
+
   const filteredIngredients =
     (search.length > 0
       ? ingredients?.filter(
@@ -82,6 +87,10 @@ export function RichSelect(props: RichSelectProps) {
     isRecipe: boolean,
     plural: string
   ) {
+    setIsCreatedIngredient(
+      ingredients.filter((i) => i.id == id).length == 0 && id != ""
+    );
+
     setValue("id", id);
     setValue("name", name);
     setValue("image", image);
@@ -115,6 +124,23 @@ export function RichSelect(props: RichSelectProps) {
     }
   }
 
+  const defaultIngredient = useMemo(
+    () =>
+      search.length > 1
+        ? {
+            id: generateShortUID() + generateShortUID(),
+            name: capitalize(search).trim(),
+            image: `${ENV.API.UPLOADURL}/ingredients/${normalize(
+              search[0]
+            )}.png`,
+            unities: [0, 1, 2, 3, 4, 5, 6, 7],
+            isRecipe: false,
+            plural: capitalize(search).trim(),
+          }
+        : null,
+    [search]
+  );
+
   const isError = error != null;
 
   return (
@@ -135,10 +161,14 @@ export function RichSelect(props: RichSelectProps) {
           value={search}
           onChangeText={(text) => {
             setSearch(text);
-
+            scrollRef.current?.scrollTo({
+              x: 0,
+            });
             if (selectedId != "" && text != getValues("name")) {
               handleIngredientPress("", "", "", [], false, "");
               setSearch("");
+            } else if (text.length < 2) {
+              handleIngredientPress("", "", "", [], false, "");
             }
           }}
           placeholder="Nom de l'ingrédient"
@@ -183,6 +213,27 @@ export function RichSelect(props: RichSelectProps) {
               isSelected={false}
             />
           ))}
+          {search.length > 1 &&
+            !isCreatingIngredient &&
+            ingredients.filter((i) => normalize(i.name) == normalize(search))
+              .length == 0 && (
+              <Ingredient
+                image={defaultIngredient!.image}
+                isRecipe={defaultIngredient!.isRecipe}
+                isSelected={false}
+                name={defaultIngredient!.name}
+                onPress={() =>
+                  handleIngredientPress(
+                    defaultIngredient!.id,
+                    defaultIngredient!.name,
+                    defaultIngredient!.image,
+                    defaultIngredient!.unities,
+                    defaultIngredient!.isRecipe,
+                    defaultIngredient!.plural
+                  )
+                }
+              />
+            )}
         </ScrollView>
       </View>
     </FieldContainer>
