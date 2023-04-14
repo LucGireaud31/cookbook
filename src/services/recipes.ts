@@ -1,8 +1,15 @@
-import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import {
+  ApolloError,
+  gql,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import {
   TMiniRecipe,
   TRecipe,
   TRecipeBody,
+  TRecipeItem,
   TRecipePagination,
 } from "../types/recipe";
 import { removeFieldInObject } from "../utils/object";
@@ -10,6 +17,7 @@ import { removeFieldInObject } from "../utils/object";
 import axios from "axios";
 import { ENV } from "../../env";
 import { getTokenLocalStorage } from "./asyncStorage";
+import Toast from "react-native-toast-message";
 
 // -------------- //
 // ---Recipes--- -//
@@ -511,4 +519,40 @@ export async function uploadRecipeImage(uri: string) {
   );
 
   return status == 200 ? data : null;
+}
+
+// -------------------- //
+// --Duplicate recipe-- //
+// -------------------- //
+
+const mutationDuplicateRecipe = gql`
+  mutation duplicateRecipe($id: String!) {
+    duplicateRecipe(id: $id) {
+      id
+    }
+  }
+`;
+
+export function useDuplicateRecipe() {
+  const [mutate, { client }] = useMutation<{ duplicateRecipe: { id: string } }>(
+    mutationDuplicateRecipe
+  );
+
+  async function mutation(id: string) {
+    try {
+      const { data } = await mutate({ variables: { id } });
+
+      if (data?.duplicateRecipe) {
+        client.refetchQueries({ include: [queryGetRecipes] });
+      }
+    } catch (err) {
+      Toast.show({
+        text1: "Une erreur est survenue",
+        text2: (err as ApolloError).message,
+        type: "error",
+      });
+    }
+  }
+
+  return mutation;
 }

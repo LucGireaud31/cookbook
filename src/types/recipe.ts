@@ -99,3 +99,10 @@ export type QuantityBody = {
   value?: number;
   type?: IngredientQuantityType;
 };
+
+export type TQrCode = {
+  action: "duplicateRecipe";
+  data: {
+    id: string;
+  };
+};

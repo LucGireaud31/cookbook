@@ -11,13 +11,14 @@ export interface ScanQrCodeModalRef {
 
 interface ScanQrCodeModalProps {
   onScan(data: string): void;
+  label: string;
 }
 
 export const ScanQrCodeModal = forwardRef<
   ScanQrCodeModalRef,
   ScanQrCodeModalProps
 >((props, ref) => {
-  const { onScan: onScanProps } = props;
+  const { onScan: onScanProps, label } = props;
   const [isOpen, setIsOpen] = useState(false);
 
   const [isScanned, setIsScanned] = useState(false);
@@ -52,7 +53,7 @@ export const ScanQrCodeModal = forwardRef<
       onClose={() => setIsOpen(false)}
     >
       <BarCodeScanner onBarCodeScanned={onScan} style={styles.camera} />
-      <Text style={styles.title}>Scanner le code d'invitation</Text>
+      <Text style={styles.title}>{label}</Text>
     </Modal>
   );
 });

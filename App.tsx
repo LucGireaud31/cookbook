@@ -5,6 +5,7 @@ import { Navigator } from "./src/Navigator";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { ENV } from "./env";
 import { Provider } from "jotai";
+import { Provider as ProviderPaper } from "react-native-paper";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const apolloClient = new ApolloClient({
@@ -17,9 +18,11 @@ export default function App() {
     <>
       <ApolloProvider client={apolloClient}>
         <Provider>
-          <NavigationContainer>
-            <Navigator />
-          </NavigationContainer>
+          <ProviderPaper>
+            <NavigationContainer>
+              <Navigator />
+            </NavigationContainer>
+          </ProviderPaper>
         </Provider>
       </ApolloProvider>
       <Toast />

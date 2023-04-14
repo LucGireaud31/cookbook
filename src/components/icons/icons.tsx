@@ -10,6 +10,36 @@ interface SVGProps {
   weight?: "bold" | "normal";
 }
 
+export function DownloadIcon(props: SVGProps) {
+  const { size = 32 } = props;
+  return (
+    <Svg
+      width={size}
+      height={size}
+      fill="black"
+      viewBox="0 0 256 256"
+      {...props}
+    >
+      <Path d="M228 152v56a20 20 0 01-20 20H48a20 20 0 01-20-20v-56a12 12 0 0124 0v52h152v-52a12 12 0 0124 0zm-108.49 8.49a12 12 0 0017 0l40-40a12 12 0 00-17-17L140 123V40a12 12 0 00-24 0v83l-19.51-19.49a12 12 0 00-17 17z" />
+    </Svg>
+  );
+}
+
+export function DotMenuIcon(props: SVGProps) {
+  const { size = 25 } = props;
+  return (
+    <Svg
+      width={size}
+      height={size}
+      fill={theme[400]}
+      viewBox="0 0 256 256"
+      {...props}
+    >
+      <Path d="M112 60a16 16 0 1116 16 16 16 0 01-16-16zm16 52a16 16 0 1016 16 16 16 0 00-16-16zm0 68a16 16 0 1016 16 16 16 0 00-16-16z" />
+    </Svg>
+  );
+}
+
 export function EyeIcon(props: SVGProps) {
   const { size = 30, color = "black" } = props;
   return (
@@ -461,9 +491,15 @@ export function InfoIcon(props: SVGProps) {
 }
 
 export function ShareIcon(props: SVGProps) {
-  const { size = 25, color = "black" } = props;
+  const { size = 32, color = "black" } = props;
   return (
-    <Svg width={32} height={32} fill={color} viewBox="0 0 256 256" {...props}>
+    <Svg
+      width={size}
+      height={size}
+      fill={color}
+      viewBox="0 0 256 256"
+      {...props}
+    >
       <Path d="M176 160a39.89 39.89 0 00-28.62 12.09l-46.1-29.63a39.8 39.8 0 000-28.92l46.1-29.63a40 40 0 10-8.66-13.45l-46.1 29.63a40 40 0 100 55.82l46.1 29.63A40 40 0 10176 160zm0-128a24 24 0 11-24 24 24 24 0 0124-24zM64 152a24 24 0 1124-24 24 24 0 01-24 24zm112 72a24 24 0 1124-24 24 24 0 01-24 24z" />
     </Svg>
   );

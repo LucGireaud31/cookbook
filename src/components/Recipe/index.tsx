@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Text, ScrollView, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Provider } from "react-native-paper";
 import { useNavigation } from "../../hooks/useNavigation";
-import {
-  useDeleteRecipe,
-  useRecipe,
-  useToggleRecipeNote,
-} from "../../services/recipes";
+import { useRecipe, useToggleRecipeNote } from "../../services/recipes";
 import { background, red, theme } from "../../theme/colors";
 import { StackComponent } from "../../types/reactNavigation";
 import { RecipeQuantityTypeEnum } from "../../types/recipe";
@@ -16,16 +13,16 @@ import {
 } from "../../utils/ingredientQuantityType";
 import { roundNumber } from "../../utils/number";
 import { toPlural, wrapText } from "../../utils/string";
-import { MinusIcon, PencilIcon, PlusIcon, TrashIcon } from "../icons/icons";
+import { MinusIcon, PencilIcon, PlusIcon } from "../icons/icons";
 import { Container } from "../Layout/Container";
 import { Button } from "../shared/Button";
 import { IconButton } from "../shared/IconButton";
 import { ListItem } from "../shared/ListItem";
 import { Modal } from "../shared/Modal";
-import { DeletionModal, DeletionModalRef } from "../shared/Modals/Deletion";
 import { StarInput } from "../shared/StarInput";
 import { Tag } from "../shared/Tag";
 import { Commentary } from "./Commentary";
+import { RecipeAction } from "./RecipeActions";
 
 interface RecipeProps extends StackComponent {
   isModal?: boolean;
@@ -36,12 +33,9 @@ export function Recipe(props: RecipeProps) {
 
   const { data: recipe, query } = useRecipe(route?.params?.id ?? "");
 
-  const deletionModalRef = useRef<DeletionModalRef>(null);
-
   const noteMutation = useToggleRecipeNote();
-
+  console.log(recipe?.image);
   const navigation = useNavigation();
-  const deleteRecipeMutation = useDeleteRecipe();
 
   const [quantityCpt, setQuantityCpt] = useState(1);
   const [note, setNote] = useState(0);
@@ -63,20 +57,8 @@ export function Recipe(props: RecipeProps) {
 
     !isModal &&
       navigation.setOptions({
-        headerRight: () => (
-          <IconButton
-            icon={<TrashIcon color={red[500]} />}
-            onPress={() =>
-              deletionModalRef.current?.onOpen(`la recette '${recipe.name}'`)
-            }
-            style={{
-              backgroundColor: red[50],
-              padding: 5,
-              borderRadius: 8,
-            }}
-          />
-        ),
         title: wrapText(recipe.name, 20),
+        headerRight: () => <RecipeAction recipe={recipe} />,
       });
 
     setQuantityCpt(recipe.quantity?.value ?? 1);
@@ -84,11 +66,6 @@ export function Recipe(props: RecipeProps) {
   }, [recipe]);
 
   if (!recipe) return null;
-
-  function handleDeleteRecipe() {
-    deleteRecipeMutation(recipe!.id);
-    navigation.goBack();
-  }
 
   function handleEditRecipe() {
     navigation.navigate("recipeEdit", { recipe });
@@ -230,7 +207,6 @@ export function Recipe(props: RecipeProps) {
             <Text style={styles.noDataLabel}>Aucun ingrédient</Text>
           )}
         </View>
-
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Préparation</Text>
           {recipe.content.length > 0 ? (
@@ -248,7 +224,6 @@ export function Recipe(props: RecipeProps) {
         </View>
         <Commentary recipeId={recipe.id} commentary={recipe.commentary} />
         <Text style={styles.readyLabel}>Bon appétit !</Text>
-
         <Modal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
@@ -268,8 +243,8 @@ export function Recipe(props: RecipeProps) {
             isModal={true}
           />
         </Modal>
-        <DeletionModal ref={deletionModalRef} onDelete={handleDeleteRecipe} />
       </Container>
+
       {!isModal && (
         <Button
           style={styles.editButton}

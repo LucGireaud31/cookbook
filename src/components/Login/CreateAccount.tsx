@@ -130,6 +130,7 @@ export function CreateAccount(props: CreateAccountProps) {
       </Form>
       <ScanQrCodeModal
         ref={scanModalRef}
+        label="Scanner le code d'invitation"
         onScan={(data) => form.setValue("existingHome", data)}
       />
     </LoginContainer>

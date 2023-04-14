@@ -1,10 +1,17 @@
 import { useSetAtom } from "jotai";
 import { ReactNode, useRef } from "react";
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import Toast from "react-native-toast-message";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { tokenAtom } from "../../../Navigator";
 import { setTokenLocalStorage } from "../../../services/asyncStorage";
-import { LogoutIcon, ShareIcon } from "../../icons/icons";
+import { useDuplicateRecipe } from "../../../services/recipes";
+import { TQrCode } from "../../../types/recipe";
+import { LogoutIcon, ScanIcon, ShareIcon } from "../../icons/icons";
+import {
+  ScanQrCodeModal,
+  ScanQrCodeModalRef,
+} from "../../Login/ScanQrCodeModal";
 import { Divider } from "../../shared/Divider";
 import { ShareHomeModal, ShareHomeModalRef } from "./ShareHomeModal";
 
@@ -15,13 +22,47 @@ export function Drawer(props: DrawerProps) {
 
   const { navigate } = useNavigation();
 
+  const duplicateRecipe = useDuplicateRecipe();
+
   const setToken = useSetAtom(tokenAtom);
 
   const shareModalRef = useRef<ShareHomeModalRef>(null);
+  const scanQrCodeModalRef = useRef<ScanQrCodeModalRef>(null);
 
   function logOut() {
     setToken(null);
     setTokenLocalStorage(null);
+  }
+
+  async function onScan(data: string) {
+    try {
+      const {
+        data: { id },
+        action,
+      }: TQrCode = JSON.parse(data);
+
+      if (action == "duplicateRecipe") {
+        try {
+          await duplicateRecipe(id);
+          Toast.show({
+            text1: "Copie réalisée avec succès",
+            type: "success",
+          });
+        } catch {
+          Toast.show({
+            text1: "Copie impossible à réaliser",
+            text2: "Une erreur imprévue est survenue",
+            type: "error",
+          });
+        }
+      }
+    } catch {
+      Toast.show({
+        text1: "QR Code invalide",
+        text2: "Veuillez réessayer",
+        type: "error",
+      });
+    }
   }
 
   return (
@@ -42,8 +83,16 @@ export function Drawer(props: DrawerProps) {
         >
           Tags
         </Link>
+        <Divider style={{ marginVertical: 10 }} />
+
         <Link icon={<ShareIcon />} onPress={shareModalRef.current?.onOpen}>
-          Partager mes recettes
+          Partager mon compte
+        </Link>
+        <Link
+          icon={<ScanIcon color="black" size={32} />}
+          onPress={scanQrCodeModalRef.current?.onOpen}
+        >
+          Dupliquer une recette d'un utilisateur
         </Link>
         <Divider style={{ marginVertical: 10 }} />
         <Link icon={<LogoutIcon />} color="red" onPress={logOut}>
@@ -55,6 +104,11 @@ export function Drawer(props: DrawerProps) {
         <Text style={styles.myName}>Luc Gireaud</Text>
       </View>
       <ShareHomeModal ref={shareModalRef} />
+      <ScanQrCodeModal
+        ref={scanQrCodeModalRef}
+        label="Scanner un Qr Code pour recevoir la recette associée"
+        onScan={onScan}
+      />
     </View>
   );
 }
@@ -89,7 +143,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    marginLeft: 10,
+    paddingHorizontal: 10,
     marginTop: 40,
   },
   footer: { flexDirection: "row", justifyContent: "space-between" },
@@ -102,7 +156,7 @@ const styles = StyleSheet.create({
   linkContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 5,
+    paddingVertical: 10,
   },
   link: {
     fontWeight: "600",
