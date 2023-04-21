@@ -238,8 +238,6 @@ export function EditForm(props: EditFormProps) {
                       ing.quantity.value,
                       ing.isRecipe
                     )
-                      .toString()
-                      .replace(".", ",")
                   : undefined,
               onDelete: () =>
                 ing.id && onDeleteIngredient(ing.id, ing.isRecipe ?? false),

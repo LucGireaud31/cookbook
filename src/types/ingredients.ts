@@ -7,6 +7,7 @@ export enum IngredientQuantityType {
   CAC,
   Pinch,
   Handle,
+  Bag,
 }
 
 export type TRecipeIngredient = {

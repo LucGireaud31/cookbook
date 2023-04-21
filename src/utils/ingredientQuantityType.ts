@@ -7,32 +7,36 @@ export function formatIngredientQuantityLabel(
   value: number,
   isRecipe?: boolean
 ) {
+  const valueStr = value.toString().replace(".", ",");
+
   if (isRecipe) {
     switch (type) {
       case RecipeQuantityTypeEnum.Personns:
-        return value + toPlural(" personne", value);
+        return valueStr + toPlural(" personne", value);
       default:
-        return value;
+        return valueStr.toString().replace(".", ",");
     }
   }
 
   switch (type) {
     case IngredientQuantityType.CAC:
-      return value + " c.à.c";
+      return valueStr + " c.à.c";
     case IngredientQuantityType.CAS:
-      return value + " c.à.s";
+      return valueStr + " c.à.s";
     case IngredientQuantityType.Cl:
-      return value + " cl";
+      return valueStr + " cl";
     case IngredientQuantityType.Ml:
-      return value + " ml";
+      return valueStr + " ml";
     case IngredientQuantityType.Gr:
-      return value + " gr";
+      return valueStr + " gr";
     case IngredientQuantityType.Handle:
-      return value + toPlural(" poingée", value);
+      return valueStr + toPlural(" poingée", value);
     case IngredientQuantityType.Pinch:
-      return value + toPlural(" pincée", value);
+      return valueStr + toPlural(" pincée", value);
+    case IngredientQuantityType.Bag:
+      return valueStr + toPlural(" sachet", value);
     default:
-      return value;
+      return valueStr.toString();
   }
 }
 
@@ -63,4 +67,5 @@ export const ingredientsUnitOptions = [
   { key: IngredientQuantityType.Handle.toString(), label: "Poignée" },
   { key: IngredientQuantityType.CAC.toString(), label: "Cuillère à café" },
   { key: IngredientQuantityType.CAS.toString(), label: "Cuillère à soupe" },
+  { key: IngredientQuantityType.Bag.toString(), label: "Sachet" },
 ];

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getCurrentProjectVersion } from "../utils/project";
 import { FilterProps } from "./recipes";
 
 enum KeysEnum {
@@ -6,6 +7,7 @@ enum KeysEnum {
   Page = "page",
   Token = "token",
   Login = "login",
+  LastVersion = "last-version",
 }
 
 // ---------- //
@@ -57,6 +59,14 @@ export async function getLoginLocalStorage(): Promise<string | null> {
   }
 }
 
+export async function getLastVersionLocalStorage(): Promise<string> {
+  try {
+    return (await AsyncStorage.getItem(KeysEnum.LastVersion)) ?? "";
+  } catch {
+    return "";
+  }
+}
+
 // ---------- //
 // --Set-- //
 // ---------- //
@@ -83,5 +93,13 @@ export async function setTokenLocalStorage(token: string | null) {
     } else {
       await AsyncStorage.removeItem(KeysEnum.Token);
     }
+  } catch {}
+}
+
+export async function updateLastVersionLocalStorage() {
+  const currentVersion = getCurrentProjectVersion();
+  try {
+    await AsyncStorage.setItem(KeysEnum.LastVersion, currentVersion);
+    return currentVersion;
   } catch {}
 }

@@ -15,7 +15,10 @@ import { ArrowLeftIcon, DrawerIcon } from "./components/icons/icons";
 import { IconButton } from "./components/shared/IconButton";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "./components/Layout/Drawer";
-import { getTokenLocalStorage } from "./services/asyncStorage";
+import {
+  getTokenLocalStorage,
+  setFilterLocalStorage,
+} from "./services/asyncStorage";
 import { Login } from "./components/Login";
 import { atom, useAtom } from "jotai";
 import { useSetApolloHeader } from "./hooks/useSetApolloHeader";
@@ -54,6 +57,7 @@ export function Navigator() {
       const token = await getTokenLocalStorage();
       setToken(token);
     })();
+    setFilterLocalStorage({});
   }, []);
 
   useEffect(() => {

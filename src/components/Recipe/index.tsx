@@ -34,7 +34,7 @@ export function Recipe(props: RecipeProps) {
   const { data: recipe, query } = useRecipe(route?.params?.id ?? "");
 
   const noteMutation = useToggleRecipeNote();
-  console.log(recipe?.image);
+
   const navigation = useNavigation();
 
   const [quantityCpt, setQuantityCpt] = useState(1);
@@ -197,9 +197,7 @@ export function Recipe(props: RecipeProps) {
                         (recipe.quantity?.value ?? 1),
                       1
                     )
-                  )
-                    .toString()
-                    .replace(".", ",")}
+                  )}
                 />
               ))}
             </View>
@@ -312,7 +310,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 10,
+    marginLeft: 10,
   },
   doseContainer: {
     flexDirection: "row",
@@ -325,7 +323,7 @@ const styles = StyleSheet.create({
     width: "50%",
     justifyContent: "space-between",
   },
-  doseIcon: { padding: 8 },
+  doseIcon: { padding: 6 },
   doseLabel: {
     marginHorizontal: 5,
     fontSize: 14,

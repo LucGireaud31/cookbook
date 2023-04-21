@@ -1,7 +1,7 @@
 import { useTypes } from "../../services/types";
 import { SearchInput } from "../shared/SearchInput";
 import { TypeButton } from "./TypeButton";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Text, FlatList } from "react-native";
 import { Container } from "../Layout/Container";
 import { IconButton } from "../shared/IconButton";
@@ -17,12 +17,17 @@ import { queryGetTags } from "../../services/tags";
 import { useForm } from "react-hook-form";
 import {
   getFilterLocalStorage,
+  getLastVersionLocalStorage,
   getPageLocalStorage,
   setFilterLocalStorage,
   setPageLocalStorage,
+  updateLastVersionLocalStorage,
 } from "../../services/asyncStorage";
 import { Form } from "../shared/Form";
 import { atom, useAtomValue } from "jotai";
+import { getCurrentProjectVersion } from "../../utils/project";
+import { getHistory } from "../../services/history";
+import { HistoryModal, HistoryModalRef } from "../History";
 
 const LIST_SIZE = 20;
 
@@ -32,13 +37,15 @@ export function Home() {
   const [page, setPage] = useState(1);
   const [pageMax, setPageMax] = useState(1);
 
+  const historyRef = useRef<HistoryModalRef>(null);
+
   const navigation = useNavigation();
 
   const form = useForm<FilterProps>();
 
   const filterValue = useAtomValue(filterAtom);
 
-  const { data, refetch, query: queryRecipes } = useRecipesPagination();
+  const { client, data, refetch, query: queryRecipes } = useRecipesPagination();
   const { data: types, query: queryGetTypes } = useTypes();
 
   const [recipes, setRecipes] = useState<TRecipeItem[] | null>(null);
@@ -103,8 +110,8 @@ export function Home() {
   }, [filterValue]);
 
   useEffect(() => {
-    // Default filter in local storage
     (async () => {
+      // Default filter in local storage
       const filter = await getFilterLocalStorage();
       const page = await getPageLocalStorage();
 
@@ -112,6 +119,19 @@ export function Home() {
       setPage(page);
 
       onRefetch(page);
+
+      // History
+      const localVersion = await getLastVersionLocalStorage();
+      const realVersion = getCurrentProjectVersion();
+
+      if (localVersion != realVersion) {
+        // Call api
+        const history = await getHistory(client, realVersion);
+        // Display message
+        historyRef.current?.onOpen(history);
+
+        updateLastVersionLocalStorage();
+      }
     })();
   }, []);
 
@@ -203,6 +223,7 @@ export function Home() {
           onClose={() => setIsFilterOpen(false)}
         />
       </View>
+      <HistoryModal ref={historyRef} />
     </Form>
   );
 }

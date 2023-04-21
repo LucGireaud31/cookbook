@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useSetAtom } from "jotai";
 import { ReactNode, useRef } from "react";
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
@@ -5,9 +6,17 @@ import Toast from "react-native-toast-message";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { tokenAtom } from "../../../Navigator";
 import { setTokenLocalStorage } from "../../../services/asyncStorage";
+import { getHistory } from "../../../services/history";
 import { useDuplicateRecipe } from "../../../services/recipes";
 import { TQrCode } from "../../../types/recipe";
-import { LogoutIcon, ScanIcon, ShareIcon } from "../../icons/icons";
+import { getCurrentProjectVersion } from "../../../utils/project";
+import { HistoryModal, HistoryModalRef } from "../../History";
+import {
+  HistoryIcon,
+  LogoutIcon,
+  ScanIcon,
+  ShareIcon,
+} from "../../icons/icons";
 import {
   ScanQrCodeModal,
   ScanQrCodeModalRef,
@@ -22,16 +31,27 @@ export function Drawer(props: DrawerProps) {
 
   const { navigate } = useNavigation();
 
+  const client = useApolloClient();
+
   const duplicateRecipe = useDuplicateRecipe();
 
   const setToken = useSetAtom(tokenAtom);
 
   const shareModalRef = useRef<ShareHomeModalRef>(null);
   const scanQrCodeModalRef = useRef<ScanQrCodeModalRef>(null);
+  const historyRef = useRef<HistoryModalRef>(null);
 
   function logOut() {
     setToken(null);
     setTokenLocalStorage(null);
+  }
+
+  async function onNews() {
+    const realVersion = getCurrentProjectVersion();
+
+    const history = await getHistory(client, realVersion);
+    // Display message
+    historyRef.current?.onOpen(history);
   }
 
   async function onScan(data: string) {
@@ -94,6 +114,9 @@ export function Drawer(props: DrawerProps) {
         >
           Dupliquer une recette d'un utilisateur
         </Link>
+        <Link icon={<HistoryIcon size={32} />} onPress={onNews}>
+          Nouveauté
+        </Link>
         <Divider style={{ marginVertical: 10 }} />
         <Link icon={<LogoutIcon />} color="red" onPress={logOut}>
           Déconnexion
@@ -109,6 +132,7 @@ export function Drawer(props: DrawerProps) {
         label="Scanner un Qr Code pour recevoir la recette associée"
         onScan={onScan}
       />
+      <HistoryModal ref={historyRef} />
     </View>
   );
 }
@@ -156,7 +180,7 @@ const styles = StyleSheet.create({
   linkContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   link: {
     fontWeight: "600",
