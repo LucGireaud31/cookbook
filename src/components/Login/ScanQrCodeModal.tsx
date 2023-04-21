@@ -1,8 +1,9 @@
 import { BarCodeEvent, BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
-import { forwardRef, useImperativeHandle, useState } from "react";
-import { StyleSheet, Text, Dimensions } from "react-native";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { StyleSheet, Text, Dimensions, View } from "react-native";
 import { theme } from "../../theme/colors";
+import { sleep } from "../../utils/promise";
 import { Modal } from "../shared/Modal";
 
 export interface ScanQrCodeModalRef {
@@ -22,16 +23,25 @@ export const ScanQrCodeModal = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
 
   const [isScanned, setIsScanned] = useState(false);
-
+  const [display, setDisplay] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useImperativeHandle(ref, () => ({
     onOpen: () => {
       setIsOpen(true);
-      setIsScanned(false);
+
       getPermission();
     },
   }));
+
+  useEffect(() => {
+    if (isOpen) {
+      (async () => {
+        await sleep(100);
+        setDisplay(true);
+      })();
+    }
+  }, [isOpen]);
 
   async function getPermission() {
     const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -50,9 +60,20 @@ export const ScanQrCodeModal = forwardRef<
     <Modal
       containerStyle={styles.modal}
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+        setIsScanned(false);
+        setDisplay(false);
+      }}
+      titleStyle={{
+        color: "red",
+      }}
     >
-      <BarCodeScanner onBarCodeScanned={onScan} style={styles.camera} />
+      {display ? (
+        <BarCodeScanner onBarCodeScanned={onScan} style={styles.camera} />
+      ) : (
+        <View style={styles.camera} />
+      )}
       <Text style={styles.title}>{label}</Text>
     </Modal>
   );
@@ -67,7 +88,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    padding: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 15,
     position: "absolute",
     color: theme[400],
     width: "100%",
@@ -77,5 +99,6 @@ const styles = StyleSheet.create({
   camera: {
     width: Dimensions.get("screen").width - 50,
     height: Dimensions.get("screen").height * 0.7,
+    backgroundColor: "black",
   },
 });
