@@ -46,8 +46,6 @@ export function Input(props: InputProps) {
     subTitle,
     rules,
     info,
-    rightAddon,
-    style,
     ...rest
   } = props;
 
@@ -98,26 +96,8 @@ export function Input(props: InputProps) {
             }
             rest.onChangeText?.(text);
           }}
-          style={{ ...(style as any), ...(rightAddon && { paddingRight: 40 }) }}
           {...rest}
         />
-        {rightAddon && (
-          <View
-            style={{
-              position: "absolute",
-              height: 36,
-              width: 36,
-              top: 2,
-              right: 2,
-              justifyContent: "center",
-              alignItems: "center",
-
-              backgroundColor: "white",
-            }}
-          >
-            {rightAddon}
-          </View>
-        )}
       </View>
     </FieldContainer>
   );

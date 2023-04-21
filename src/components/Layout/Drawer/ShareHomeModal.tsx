@@ -11,6 +11,8 @@ export interface ShareHomeModalRef {
 
 interface ShareHomeModalProps {}
 
+const TIME = 5;
+
 export const ShareHomeModal = forwardRef<
   ShareHomeModalRef,
   ShareHomeModalProps
@@ -23,14 +25,13 @@ export const ShareHomeModal = forwardRef<
   useImperativeHandle(ref, () => ({
     onOpen: () => {
       setIsOpen(true);
-      setDisplay(false);
     },
   }));
 
   useEffect(() => {
     if (isOpen) {
       (async () => {
-        await sleep(5000);
+        await sleep(TIME * 1000);
         setDisplay(true);
       })();
     }
@@ -41,7 +42,10 @@ export const ShareHomeModal = forwardRef<
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+        setDisplay(false);
+      }}
       title="Mon code d'invitation"
     >
       <View style={styles.container}>
@@ -51,8 +55,9 @@ export const ShareHomeModal = forwardRef<
             <QRCode value={homeName} />
           </>
         )}
+        {!display && <Text>Le code apparaitra dans {TIME} secondes</Text>}
         <Text style={styles.warning}>
-          Attention ! toute personne ayant accès à ce code pourra accéder à vos
+          Attention ! toute personne ayant accès à ce code pourra modifier vos
           recettes
         </Text>
       </View>

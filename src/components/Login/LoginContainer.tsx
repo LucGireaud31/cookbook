@@ -4,8 +4,9 @@ import {
   StyleSheet,
   Text,
   Image,
-  Dimensions,
   ScrollView,
+  StyleProp,
+  ViewStyle,
 } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
 import { theme } from "../../theme/colors";
@@ -16,10 +17,18 @@ interface LoginContainerProps {
   children?: ReactNode;
   canGoBack?: boolean;
   title?: string;
+  displayHeader?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function LoginContainer(props: LoginContainerProps) {
-  const { children, canGoBack = true, title = "Mon livre de recettes" } = props;
+  const {
+    children,
+    canGoBack = true,
+    title = "Mon livre de recettes",
+    displayHeader = true,
+    containerStyle,
+  } = props;
 
   const { goBack } = useNavigation();
 
@@ -32,14 +41,19 @@ export function LoginContainer(props: LoginContainerProps) {
           onPress={goBack}
         />
       )}
-      <ScrollView keyboardShouldPersistTaps="always" style={styles.container}>
-        <View style={styles.header}>
-          <Image
-            style={styles.image}
-            source={require("../../../assets/icon.png")}
-          />
-          <Text style={styles.title}>{title}</Text>
-        </View>
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        style={[styles.container, containerStyle]}
+      >
+        {displayHeader && (
+          <View style={styles.header}>
+            <Image
+              style={styles.image}
+              source={require("../../../assets/icon.png")}
+            />
+            <Text style={styles.title}>{title}</Text>
+          </View>
+        )}
         <View style={styles.body}>{children}</View>
       </ScrollView>
     </>

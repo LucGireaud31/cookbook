@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { View, StyleSheet, Text, Image, FlatList } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { THistory } from "../../types/history";
 import { Modal } from "../shared/Modal";
 

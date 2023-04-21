@@ -108,7 +108,10 @@ export function useCreateUser() {
 
   async function onMutate(user: TCreateUser) {
     try {
-      await mutation({ variables: { user } });
+      console.log(user);
+      await mutation({
+        variables: { user },
+      });
 
       Toast.show({
         type: "success",
@@ -118,6 +121,7 @@ export function useCreateUser() {
       });
       return true;
     } catch (e: any) {
+      console.error(e);
       Toast.show({
         type: "error",
         text1: "Erreur",

@@ -1,17 +1,13 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { Dimensions, StyleSheet, TextInput, View } from "react-native";
-import { useNavigation } from "../../hooks/useNavigation";
-import { useCreateUser } from "../../services/credentials";
-import { TCreateUserSchema } from "../../types/credentials";
-import { ScanIcon } from "../icons/icons";
-import { Button } from "../shared/Button";
-import { Form } from "../shared/Form";
-import { Input } from "../shared/form/Input";
-import { InputPassword } from "../shared/form/InputPassword";
-import { IconButton } from "../shared/IconButton";
-import { LoginContainer } from "./LoginContainer";
-import { ScanQrCodeModal, ScanQrCodeModalRef } from "./ScanQrCodeModal";
+import { Dimensions, StyleSheet, TextInput } from "react-native";
+import { useNavigation } from "../../../hooks/useNavigation";
+import { TCreateUserSchema } from "../../../types/credentials";
+import { Button } from "../../shared/Button";
+import { Form } from "../../shared/Form";
+import { Input } from "../../shared/form/Input";
+import { InputPassword } from "../../shared/form/InputPassword";
+import { LoginContainer } from "../LoginContainer";
 
 interface CreateAccountProps {}
 
@@ -28,28 +24,16 @@ export function CreateAccount(props: CreateAccountProps) {
 
   const form = useForm<TCreateUserSchema>({ defaultValues: DEFAULT_FORM });
 
-  const onCreateUser = useCreateUser();
-
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
 
   async function onSubmit({ password2, ...values }: TCreateUserSchema) {
-    const res = await onCreateUser(values);
-
-    if (res) {
-      goBack();
-    }
-  }
-
-  function handleScanQrCode() {
-    scanModalRef.current?.onOpen();
+    navigate("shareMyBook", { ...values });
   }
 
   // Refs
-  const scanModalRef = useRef<ScanQrCodeModalRef>(null);
   const input2 = useRef<TextInput>(null);
   const input3 = useRef<TextInput>(null);
   const input4 = useRef<TextInput>(null);
-  const input5 = useRef<TextInput>(null);
 
   return (
     <LoginContainer>
@@ -97,7 +81,7 @@ export function CreateAccount(props: CreateAccountProps) {
           label="Resaisir le mot de passe"
           isRequired
           autoCapitalize="none"
-          onSubmitEditing={() => input5.current?.focus()}
+          onSubmitEditing={form.handleSubmit(onSubmit)}
           secureTextEntry={true}
           {...form.register("password2")}
           rules={{
@@ -105,34 +89,11 @@ export function CreateAccount(props: CreateAccountProps) {
             customMessage: "Le mot de passes est différent",
           }}
         />
-        <Input
-          style={styles.scanInput}
-          inputRef={input5}
-          label="Code d'invitation"
-          subTitle="Code d'un autre utilisateur, permet d'accéder aux mêmes recettes"
-          onSubmitEditing={form.handleSubmit(onSubmit)}
-          {...form.register("existingHome")}
-          rules={{
-            minLength: 6,
-            maxLength: 6,
-          }}
-          rightAddon={
-            <IconButton
-              icon={<ScanIcon size={30} />}
-              onPress={handleScanQrCode}
-            />
-          }
-        />
 
         <Button style={styles.button} onPress={form.handleSubmit(onSubmit)}>
           Créer mon compte
         </Button>
       </Form>
-      <ScanQrCodeModal
-        ref={scanModalRef}
-        label="Scanner le code d'invitation"
-        onScan={(data) => form.setValue("existingHome", data)}
-      />
     </LoginContainer>
   );
 }
@@ -144,9 +105,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   input: {
-    width: Dimensions.get("screen").width * 0.7,
-  },
-  scanInput: {
     width: Dimensions.get("screen").width * 0.7,
   },
 });

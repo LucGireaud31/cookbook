@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import { gray, theme } from "../../../theme/colors";
 import { InputProps } from "./Input";
 
@@ -15,33 +15,54 @@ export function DumpbTextInput(props: DumpbTextInput) {
     onChangeText,
     value,
     placeholder,
+    rightAddon,
     ...rest
   } = props;
 
   return (
-    <TextInput
-      ref={inputRef}
-      keyboardType={type}
-      style={{
-        ...styles.input,
-        ...(rest.numberOfLines && {
-          height: (styles.input.fontSize + 6) * rest.numberOfLines,
-        }),
-        ...(style as any),
-        ...(isError && {
-          borderWidth: 2,
-          borderColor: "red",
-        }),
-      }}
-      {...rest}
-      {...(rest.numberOfLines && {
-        multiline: true,
-      })}
-      onChangeText={onChangeText}
-      value={value}
-      placeholder={placeholder}
-      placeholderTextColor={gray[400]}
-    />
+    <View>
+      <TextInput
+        ref={inputRef}
+        keyboardType={type}
+        style={{
+          ...styles.input,
+          ...(rest.numberOfLines && {
+            height: (styles.input.fontSize + 6) * rest.numberOfLines,
+          }),
+          ...(style as any),
+          ...(isError && {
+            borderWidth: 2,
+            borderColor: "red",
+          }),
+          ...(rightAddon && { paddingRight: 40 }),
+        }}
+        {...rest}
+        {...(rest.numberOfLines && {
+          multiline: true,
+        })}
+        onChangeText={onChangeText}
+        value={value}
+        placeholder={placeholder}
+        placeholderTextColor={gray[400]}
+      />
+      {rightAddon && (
+        <View
+          style={{
+            position: "absolute",
+            height: 36,
+            width: 36,
+            top: 2,
+            right: 2,
+            justifyContent: "center",
+            alignItems: "center",
+
+            backgroundColor: "white",
+          }}
+        >
+          {rightAddon}
+        </View>
+      )}
+    </View>
   );
 }
 

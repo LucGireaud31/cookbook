@@ -27,6 +27,7 @@ import { ForgotPassword } from "./components/Login/ForgotPassword";
 import * as Linking from "expo-linking";
 import { ResetPassword } from "./components/Login/ResetPassword";
 import { StatusBar } from "expo-status-bar";
+import { ShareMyBook } from "./components/Login/CreateAccount/ShareMyBook";
 
 export const tokenAtom = atom<string | null>(null);
 
@@ -143,6 +144,7 @@ export function Navigator() {
           >
             <Stack.Screen name="login" component={Login} />
             <Stack.Screen name="createAccount" component={CreateAccount} />
+            <Stack.Screen name="shareMyBook" component={ShareMyBook} />
             <Stack.Screen name="forgotPassword" component={ForgotPassword} />
             <Stack.Screen name="resetPassword" component={ResetPassword} />
           </Stack.Navigator>
