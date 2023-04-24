@@ -35,7 +35,6 @@ export function RecipeAction(props: RecipeActionProps) {
   return (
     <View style={styles.container}>
       <Menu
-        contentStyle={styles.menuContent}
         visible={visible}
         onDismiss={closeMenu}
         anchor={

@@ -7,5 +7,6 @@ export const ENV = {
   API: {
     URL: `${prodBase}/graphql`,
     UPLOADURL: `${prodBase}/cloud`,
+    PDFURL: `${prodBase}/pdf`,
   },
 };

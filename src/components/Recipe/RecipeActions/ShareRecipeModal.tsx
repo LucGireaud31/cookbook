@@ -1,6 +1,8 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, StyleProp, TextStyle } from "react-native";
 import QRCode from "react-qr-code";
+import { ENV } from "../../../../env";
+import { theme } from "../../../theme/colors";
 import { TQrCode } from "../../../types/recipe";
 import { Modal } from "../../shared/Modal";
 
@@ -10,20 +12,29 @@ export interface ShareRecipeModalRef {
 
 interface ShareRecipeModalProps {}
 
+const TEXTS = {
+  user: "Pour recevoir une copie de la recette.",
+  pdf: "Pour télécharger un pdf de la recette.",
+};
+
 export const ShareRecipeModal = forwardRef<
   ShareRecipeModalRef,
   ShareRecipeModalProps
 >((props, ref) => {
   const {} = props;
 
-  const [value, setValue] = useState<TQrCode | null>(null);
+  const [userValue, setUserValue] = useState<TQrCode | null>(null);
+  const [pdfValue, setPdfValue] = useState<string | null>(null);
+  const [type, setType] = useState<"user" | "pdf">();
 
   const [isOpen, setIsOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({
     onOpen: (id) => {
+      setType("user");
+      setUserValue({ action: "duplicateRecipe", data: { id } });
+      setPdfValue(`${ENV.API.PDFURL}/recipes/${id}`);
       setIsOpen(true);
-      setValue({ action: "duplicateRecipe", data: { id } });
     },
   }));
 
@@ -34,15 +45,48 @@ export const ShareRecipeModal = forwardRef<
       onClose={() => setIsOpen(false)}
       style={styles.container}
     >
-      <View style={styles.qrCodeContainer}>
-        <QRCode value={JSON.stringify(value)} size={200} />
-      </View>
-      <Text style={styles.text}>
-        Faire scanner ce Qr Code pour envoyer la recette à un autre utilisateur.
-      </Text>
+      {type && (
+        <>
+          <View style={styles.qrCodeContainer}>
+            <QRCode
+              value={JSON.stringify(type == "pdf" ? pdfValue : userValue)}
+              size={200}
+            />
+          </View>
+          <Text style={styles.text}> {TEXTS[type]}</Text>
+          <View style={styles.switchContainer}>
+            <Text
+              style={[
+                styles.switchLeft,
+                type == "user" && styles.switchSelected,
+              ]}
+              onPress={() => setType("user")}
+            >
+              À un utilisateur
+            </Text>
+            <Text
+              style={[
+                styles.switchRight,
+                type == "pdf" && styles.switchSelected,
+                { backgroundColor: "#f5f5f5" },
+              ]}
+              // onPress={() => setType("pdf")}
+            >
+              En pdf (à venir)
+            </Text>
+          </View>
+        </>
+      )}
     </Modal>
   );
 });
+
+const switchBase: StyleProp<TextStyle> = {
+  width: "50%",
+  textAlign: "center",
+  borderRadius: 25,
+  textAlignVertical: "center",
+};
 
 const styles = StyleSheet.create({
   container: {},
@@ -54,4 +98,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
+  switchContainer: {
+    flexDirection: "row",
+    width: "100%",
+    marginTop: 30,
+    borderWidth: 3,
+    borderColor: theme[400],
+    borderRadius: 25,
+    height: 45,
+  },
+  switchLeft: {
+    ...switchBase,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  switchRight: {
+    ...switchBase,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
+  switchSelected: { backgroundColor: theme[400], color: "white" },
 });
