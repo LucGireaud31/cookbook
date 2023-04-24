@@ -48,7 +48,7 @@ export function RecipeAction(props: RecipeActionProps) {
         <Menu.Item
           onPress={() => {
             closeMenu();
-            shareRecipeRef.current?.onOpen(recipe.id);
+            shareRecipeRef.current?.onOpen(recipe.id, recipe.name);
           }}
           title="Partager la recette"
           leadingIcon={"share"}

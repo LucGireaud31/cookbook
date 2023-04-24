@@ -7,7 +7,7 @@ import { TQrCode } from "../../../types/recipe";
 import { Modal } from "../../shared/Modal";
 
 export interface ShareRecipeModalRef {
-  onOpen(id: string): void;
+  onOpen(id: string, name: string): void;
 }
 
 interface ShareRecipeModalProps {}
@@ -30,10 +30,12 @@ export const ShareRecipeModal = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({
-    onOpen: (id) => {
+    onOpen: (id, name) => {
       setType("user");
       setUserValue({ action: "duplicateRecipe", data: { id } });
-      setPdfValue(`${ENV.API.PDFURL}/recipes/${id}`);
+      setPdfValue(
+        `${ENV.API.PDFURL}/recipes/${id}/${name.replaceAll(" ", "%20")}`
+      );
       setIsOpen(true);
     },
   }));
@@ -49,7 +51,7 @@ export const ShareRecipeModal = forwardRef<
         <>
           <View style={styles.qrCodeContainer}>
             <QRCode
-              value={JSON.stringify(type == "pdf" ? pdfValue : userValue)}
+              value={type == "pdf" ? pdfValue ?? "" : JSON.stringify(userValue)}
               size={200}
             />
           </View>
@@ -68,11 +70,10 @@ export const ShareRecipeModal = forwardRef<
               style={[
                 styles.switchRight,
                 type == "pdf" && styles.switchSelected,
-                { backgroundColor: "#f5f5f5" },
               ]}
-              // onPress={() => setType("pdf")}
+              onPress={() => setType("pdf")}
             >
-              En pdf (à venir)
+              En pdf
             </Text>
           </View>
         </>
