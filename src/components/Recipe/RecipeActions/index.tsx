@@ -35,6 +35,7 @@ export function RecipeAction(props: RecipeActionProps) {
   return (
     <View style={styles.container}>
       <Menu
+        contentStyle={styles.menuContent}
         visible={visible}
         onDismiss={closeMenu}
         anchor={
@@ -71,15 +72,6 @@ export function RecipeAction(props: RecipeActionProps) {
           title="Supprimer"
         />
       </Menu>
-      {/* <IconButton
-        icon={<TrashIcon color={red[500]} />}
-        onPress={() => deletionModalRef.current?.onOpen(`la recette '${name}'`)}
-        style={{
-            backgroundColor: red[50],
-            padding: 5,
-            borderRadius: 8,
-        }}
-        /> */}
       <DeletionModal ref={deletionModalRef} onDelete={handleDeleteRecipe} />
       <ShareRecipeModal ref={shareRecipeRef} />
     </View>
@@ -88,6 +80,9 @@ export function RecipeAction(props: RecipeActionProps) {
 
 const styles = StyleSheet.create({
   container: {},
+  menuContent: {
+    backgroundColor: "white",
+  },
   iconButton: {
     padding: 10,
   },

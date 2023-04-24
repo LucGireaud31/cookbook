@@ -23,6 +23,7 @@ import {
 } from "../../Login/ScanQrCodeModal";
 import { Divider } from "../../shared/Divider";
 import { ShareHomeModal, ShareHomeModalRef } from "./ShareHomeModal";
+import * as Linking from "expo-linking";
 
 interface DrawerProps {}
 
@@ -122,10 +123,12 @@ export function Drawer(props: DrawerProps) {
           Déconnexion
         </Link>
       </View>
-      <View style={styles.footer}>
-        <Text style={styles.underlined}>Livre de recette v1.0.0</Text>
-        <Text style={styles.myName}>Luc Gireaud</Text>
-      </View>
+      <TouchableOpacity
+        style={styles.footer}
+        onPress={() => Linking.openURL("https://lucgireaud.fr")}
+      >
+        <Text style={styles.underlined}>À propos du développeur</Text>
+      </TouchableOpacity>
       <ShareHomeModal ref={shareModalRef} />
       <ScanQrCodeModal
         ref={scanQrCodeModalRef}
@@ -170,7 +173,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 40,
   },
-  footer: { flexDirection: "row", justifyContent: "space-between" },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 5,
+  },
   underlined: {
     textDecorationLine: "underline",
   },
