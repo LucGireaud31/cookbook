@@ -134,13 +134,13 @@ export function Recipe(props: RecipeProps) {
               <View style={styles.doseContainer}>
                 <IconButton
                   style={styles.doseIcon}
-                  icon={<MinusIcon />}
+                  icon={<MinusIcon size={20} />}
                   onPress={onMinus}
                 />
                 <Text style={styles.doseLabel}>{formatRecipeQuantity()}</Text>
                 <IconButton
                   style={styles.doseIcon}
-                  icon={<PlusIcon />}
+                  icon={<PlusIcon size={20} />}
                   onPress={onPlus}
                 />
               </View>
@@ -325,8 +325,8 @@ const styles = StyleSheet.create({
   },
   doseIcon: { padding: 6 },
   doseLabel: {
-    marginHorizontal: 5,
-    fontSize: 14,
+    marginHorizontal: 4,
+    fontSize: 12,
     color: theme[400],
     fontWeight: "600",
   },

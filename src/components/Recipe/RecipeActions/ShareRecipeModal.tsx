@@ -4,6 +4,7 @@ import QRCode from "react-qr-code";
 import { ENV } from "../../../../env";
 import { theme } from "../../../theme/colors";
 import { TQrCode } from "../../../types/recipe";
+import { normalize } from "../../../utils/string";
 import { Modal } from "../../shared/Modal";
 
 export interface ShareRecipeModalRef {
@@ -34,7 +35,9 @@ export const ShareRecipeModal = forwardRef<
       setType("user");
       setUserValue({ action: "duplicateRecipe", data: { id } });
       setPdfValue(
-        `${ENV.API.PDFURL}/recipes/${id}/${name.replaceAll(" ", "%20")}`
+        `${ENV.API.PDFURL}/recipes/${id}/${normalize(
+          name.replaceAll(" ", "%20")
+        )}`
       );
       setIsOpen(true);
     },
