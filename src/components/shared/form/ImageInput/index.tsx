@@ -22,6 +22,8 @@ export function ImageInput(props: ImageInputProps) {
 
   const error = useFieldError(name);
 
+  const [pickPhoto, setPickPhoto] = useState(false);
+
   const cameraModalRef = useRef<CameraModalRef>(null);
 
   const { field } = useController({
@@ -49,6 +51,8 @@ export function ImageInput(props: ImageInputProps) {
   }
 
   async function onPickPhoto() {
+    if (pickPhoto) return;
+    setPickPhoto(true);
     // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -56,6 +60,8 @@ export function ImageInput(props: ImageInputProps) {
       aspect: [1, 1],
       quality: 1,
     });
+
+    setPickPhoto(false);
 
     if (!result.canceled) {
       changeImage(result.assets[0].uri);
@@ -87,7 +93,7 @@ export function ImageInput(props: ImageInputProps) {
           >
             <Image style={styles.image} source={require("./galery.png")} />
 
-            <Text style={styles.legend}>Choisir dans la gallerie</Text>
+            <Text style={styles.legend}>Choisir dans la galerie</Text>
           </TouchableOpacity>
         </View>
       )}

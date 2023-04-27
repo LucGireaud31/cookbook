@@ -1,8 +1,7 @@
 import { BarCodeEvent, BarCodeScanner } from "expo-barcode-scanner";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { StyleSheet, Text, Dimensions, View } from "react-native";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { StyleSheet, Text, Dimensions } from "react-native";
 import { theme } from "../../theme/colors";
-import { sleep } from "../../utils/promise";
 import { Modal } from "../shared/Modal";
 
 export interface ScanQrCodeModalRef {
@@ -22,26 +21,15 @@ export const ScanQrCodeModal = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
 
   const [isScanned, setIsScanned] = useState(false);
-  const [display, setDisplay] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useImperativeHandle(ref, () => ({
     onOpen: async () => {
       await getPermission();
-      setDisplay(false);
       setIsScanned(false);
       setIsOpen(true);
     },
   }));
-
-  useEffect(() => {
-    if (isOpen) {
-      (async () => {
-        await sleep(200);
-        setDisplay(true);
-      })();
-    }
-  }, [isOpen]);
 
   async function getPermission() {
     const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -65,11 +53,7 @@ export const ScanQrCodeModal = forwardRef<
         color: "red",
       }}
     >
-      {display ? (
-        <BarCodeScanner onBarCodeScanned={onScan} style={styles.camera} />
-      ) : (
-        <View style={styles.camera} />
-      )}
+      <BarCodeScanner onBarCodeScanned={onScan} style={styles.camera} />
       <Text style={styles.title}>{label}</Text>
     </Modal>
   );
