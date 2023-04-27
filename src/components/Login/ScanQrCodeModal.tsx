@@ -1,5 +1,4 @@
 import { BarCodeEvent, BarCodeScanner } from "expo-barcode-scanner";
-import { Camera } from "expo-camera";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { StyleSheet, Text, Dimensions, View } from "react-native";
 import { theme } from "../../theme/colors";
@@ -27,17 +26,18 @@ export const ScanQrCodeModal = forwardRef<
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useImperativeHandle(ref, () => ({
-    onOpen: () => {
+    onOpen: async () => {
+      await getPermission();
+      setDisplay(false);
+      setIsScanned(false);
       setIsOpen(true);
-
-      getPermission();
     },
   }));
 
   useEffect(() => {
     if (isOpen) {
       (async () => {
-        await sleep(100);
+        await sleep(200);
         setDisplay(true);
       })();
     }
@@ -60,11 +60,7 @@ export const ScanQrCodeModal = forwardRef<
     <Modal
       containerStyle={styles.modal}
       isOpen={isOpen}
-      onClose={() => {
-        setIsOpen(false);
-        setIsScanned(false);
-        setDisplay(false);
-      }}
+      onClose={() => setIsOpen(false)}
       titleStyle={{
         color: "red",
       }}
