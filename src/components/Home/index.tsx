@@ -28,6 +28,7 @@ import { atom, useAtomValue } from "jotai";
 import { getCurrentProjectVersion } from "../../utils/project";
 import { getHistory } from "../../services/history";
 import { HistoryModal, HistoryModalRef } from "../History";
+import { LoadingPage } from "../shared/LoadingPage";
 
 const LIST_SIZE = 20;
 
@@ -45,8 +46,18 @@ export function Home() {
 
   const filterValue = useAtomValue(filterAtom);
 
-  const { client, data, refetch, query: queryRecipes } = useRecipesPagination();
-  const { data: types, query: queryGetTypes } = useTypes();
+  const {
+    client,
+    data,
+    refetch,
+    query: queryRecipes,
+    loading: loadingRecipes,
+  } = useRecipesPagination();
+  const {
+    data: types,
+    query: queryGetTypes,
+    loading: loadingTypes,
+  } = useTypes();
 
   const [recipes, setRecipes] = useState<TRecipeItem[] | null>(null);
 
@@ -134,6 +145,10 @@ export function Home() {
       }
     })();
   }, []);
+
+  if (loadingRecipes || loadingTypes) {
+    return <LoadingPage label="Chargement des recettes..." />;
+  }
 
   return (
     <Form form={form}>

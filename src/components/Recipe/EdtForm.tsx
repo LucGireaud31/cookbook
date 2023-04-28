@@ -157,7 +157,7 @@ export function EditForm(props: EditFormProps) {
 
     if (recipe) {
       // Update
-      onUpdate(recipe.id, value);
+      await onUpdate(recipe.id, value);
       navigation.goBack();
     } else {
       // Create

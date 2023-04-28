@@ -8,6 +8,14 @@ import { useNavigation } from "../../../hooks/useNavigation";
 import { IconButton } from "../../shared/IconButton";
 import { ShareRecipeModal, ShareRecipeModalRef } from "./ShareRecipeModal";
 import { TRecipe } from "../../../types/recipe";
+import { generatePdfUri } from "../../../utils/pdf";
+import {
+  createDownloadResumable,
+  documentDirectory,
+  getContentUriAsync,
+} from "expo-file-system";
+import { startActivityAsync } from "expo-intent-launcher";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 interface RecipeActionProps {
   recipe: TRecipe;
@@ -32,6 +40,38 @@ export function RecipeAction(props: RecipeActionProps) {
     deleteRecipeMutation(recipe.id);
     navigation.goBack();
   }
+
+  async function handleDownload() {
+    closeMenu();
+    Toast.show({
+      text1: "Téléchargement en cours",
+      text2: "Ca ne sera pas long, promis 😉",
+      type: "info",
+    });
+    const downloadResumable = createDownloadResumable(
+      generatePdfUri(recipe.id, recipe.name),
+      documentDirectory + `${recipe.name}.pdf`
+    );
+    try {
+      const result = await downloadResumable.downloadAsync();
+      if (result) {
+        const cUri = await getContentUriAsync(result.uri);
+
+        await startActivityAsync("android.intent.action.VIEW", {
+          data: cUri,
+          flags: 1,
+          type: "application/pdf",
+        });
+      }
+    } catch (e) {
+      Toast.show({
+        text1: "Une erreure est survenue",
+        text2: "Veuillez réessayer dans quelques minutes 😟",
+        type: "error",
+      });
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Menu
@@ -54,12 +94,9 @@ export function RecipeAction(props: RecipeActionProps) {
           leadingIcon={"share"}
         />
         <Menu.Item
-          onPress={() => {
-            closeMenu();
-          }}
-          title="Télécharger (à venir)"
+          onPress={() => handleDownload()}
+          title="Télécharger"
           leadingIcon={"download"}
-          disabled={true}
         />
         <Divider />
         <Menu.Item

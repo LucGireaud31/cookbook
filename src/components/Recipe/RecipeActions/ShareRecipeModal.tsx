@@ -1,10 +1,9 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { View, StyleSheet, Text, StyleProp, TextStyle } from "react-native";
 import QRCode from "react-qr-code";
-import { ENV } from "../../../../env";
 import { theme } from "../../../theme/colors";
 import { TQrCode } from "../../../types/recipe";
-import { normalize } from "../../../utils/string";
+import { generatePdfUri } from "../../../utils/pdf";
 import { Modal } from "../../shared/Modal";
 
 export interface ShareRecipeModalRef {
@@ -34,11 +33,7 @@ export const ShareRecipeModal = forwardRef<
     onOpen: (id, name) => {
       setType("user");
       setUserValue({ action: "duplicateRecipe", data: { id } });
-      setPdfValue(
-        `${ENV.API.PDFURL}/recipes/${id}/${normalize(
-          name.replaceAll(" ", "%20")
-        )}`
-      );
+      setPdfValue(generatePdfUri(id, name));
       setIsOpen(true);
     },
   }));

@@ -1,15 +1,18 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { Animated, Easing, StyleProp, ViewStyle } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { useIngredients } from "../../../services/ingredients";
+import { theme } from "../../../theme/colors";
 import { randomNumberBetween } from "../../../utils/number";
 
 interface SpinnerProps {
   size?: number;
   style?: StyleProp<ViewStyle>;
+  icon?: boolean;
 }
 
 function SpinnerMemo(props: SpinnerProps) {
-  const { size = 40, style } = props;
+  const { size = 40, style, icon = true } = props;
   let spinValue = new Animated.Value(0);
 
   const { data: ingredients } = useIngredients();
@@ -36,7 +39,6 @@ function SpinnerMemo(props: SpinnerProps) {
       inputRange: [0, 1],
       outputRange: ["0deg", "360deg"],
     });
-
     setRender(
       <Animated.Image
         source={{ uri: image }}
@@ -50,7 +52,11 @@ function SpinnerMemo(props: SpinnerProps) {
     );
   }, [ingredients]);
 
-  return render;
+  return icon ? (
+    render
+  ) : (
+    <ActivityIndicator animating={true} color={theme[400]} size={size} />
+  );
 }
 
 export const Spinner = memo(SpinnerMemo, (prev, next) => {

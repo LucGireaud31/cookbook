@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ScrollView, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Provider } from "react-native-paper";
 import { useNavigation } from "../../hooks/useNavigation";
 import { useRecipe, useToggleRecipeNote } from "../../services/recipes";
-import { background, red, theme } from "../../theme/colors";
+import { background, theme } from "../../theme/colors";
 import { StackComponent } from "../../types/reactNavigation";
 import { RecipeQuantityTypeEnum } from "../../types/recipe";
 import {
@@ -18,6 +17,7 @@ import { Container } from "../Layout/Container";
 import { Button } from "../shared/Button";
 import { IconButton } from "../shared/IconButton";
 import { ListItem } from "../shared/ListItem";
+import { LoadingPage } from "../shared/LoadingPage";
 import { Modal } from "../shared/Modal";
 import { StarInput } from "../shared/StarInput";
 import { Tag } from "../shared/Tag";
@@ -31,7 +31,7 @@ interface RecipeProps extends StackComponent {
 export function Recipe(props: RecipeProps) {
   const { route, isModal = false } = props;
 
-  const { data: recipe, query } = useRecipe(route?.params?.id ?? "");
+  const { data: recipe, query, loading } = useRecipe(route?.params?.id ?? "");
 
   const noteMutation = useToggleRecipeNote();
 
@@ -97,6 +97,8 @@ export function Recipe(props: RecipeProps) {
     }`;
   }
 
+  if (loading) return <LoadingPage label="Chargement de la recette..." />;
+
   return (
     <>
       <Container queryToRefetch={query} keyboardShouldPersistTaps="always">
@@ -130,24 +132,24 @@ export function Recipe(props: RecipeProps) {
         <View style={styles.section}>
           <View style={styles.ingredientHeader}>
             <Text style={styles.sectionLabel}>Ingrédients</Text>
-            {recipe.quantity && recipe.quantity.value && (
-              <View style={styles.doseContainer}>
-                <IconButton
-                  style={styles.doseIcon}
-                  icon={<MinusIcon size={20} />}
-                  onPress={onMinus}
-                />
-                <Text style={styles.doseLabel}>{formatRecipeQuantity()}</Text>
-                <IconButton
-                  style={styles.doseIcon}
-                  icon={<PlusIcon size={20} />}
-                  onPress={onPlus}
-                />
-              </View>
-            )}
           </View>
           {recipe.ingredients.length > 0 || recipe.recipes.length > 0 ? (
             <View style={styles.sectionContent}>
+              {recipe.quantity && recipe.quantity.value && (
+                <View style={styles.doseContainer}>
+                  <IconButton
+                    style={styles.doseIcon}
+                    icon={<MinusIcon size={30} />}
+                    onPress={onMinus}
+                  />
+                  <Text style={styles.doseLabel}>{formatRecipeQuantity()}</Text>
+                  <IconButton
+                    style={styles.doseIcon}
+                    icon={<PlusIcon size={30} />}
+                    onPress={onPlus}
+                  />
+                </View>
+              )}
               {recipe.recipes.map((ing) => (
                 <TouchableOpacity
                   key={ing.id}
@@ -307,26 +309,24 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   ingredientHeader: {
-    flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginLeft: 10,
   },
   doseContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
-    marginRight: 10,
+    marginVertical: 8,
     borderColor: theme[400],
     borderWidth: 2,
     borderRadius: 50,
-    width: "50%",
+    height: 60,
     justifyContent: "space-between",
+    paddingHorizontal: 10,
   },
-  doseIcon: { padding: 6 },
+  doseIcon: { padding: 8 },
   doseLabel: {
     marginHorizontal: 4,
-    fontSize: 12,
+    fontSize: 16,
     color: theme[400],
     fontWeight: "600",
   },
