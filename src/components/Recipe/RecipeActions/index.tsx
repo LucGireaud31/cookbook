@@ -44,7 +44,7 @@ export function RecipeAction(props: RecipeActionProps) {
   async function handleDownload() {
     closeMenu();
     Toast.show({
-      text1: "Téléchargement en cours",
+      text1: "Génération du pdf en cours",
       text2: "Ca ne sera pas long, promis 😉",
       type: "info",
     });
@@ -95,8 +95,8 @@ export function RecipeAction(props: RecipeActionProps) {
         />
         <Menu.Item
           onPress={() => handleDownload()}
-          title="Télécharger"
-          leadingIcon={"download"}
+          title="Afficher en pdf"
+          leadingIcon={"file"}
         />
         <Divider />
         <Menu.Item

@@ -1,8 +1,6 @@
-import { capitalize } from "lodash";
 import { useMemo } from "react";
 import { useController } from "react-hook-form";
-import { FlatList, StyleSheet, Text } from "react-native";
-import { theme } from "../../../theme/colors";
+import { StyleSheet, View } from "react-native";
 import { TTag } from "../../../types/tags";
 import { toPlural } from "../../../utils/string";
 import { useFieldError } from "../Form";
@@ -55,23 +53,24 @@ export function TagInput(props: TagInputProps) {
       )}`}
       isRequired={isRequired}
     >
-      <FlatList
-        nestedScrollEnabled={false}
-        data={tags}
-        numColumns={3}
-        contentContainerStyle={styles.inputContainer}
-        renderItem={(tag) => (
+      <View style={styles.inputContainer}>
+        {tags.map((tag) => (
           <TextToSelect
-            isSelected={selectedTags.find((t) => t == tag.item.id) != undefined}
-            label={tag.item.name}
-            onPress={(newSelected) => onTagPress(tag.item, newSelected)}
+            key={tag.id}
+            isSelected={selectedTags.find((t) => t == tag.id) != undefined}
+            label={tag.name}
+            onPress={(newSelected) => onTagPress(tag, newSelected)}
           />
-        )}
-      />
+        ))}
+      </View>
     </FieldContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  inputContainer: {},
+  inputContainer: {
+    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
 });

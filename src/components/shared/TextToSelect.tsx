@@ -32,12 +32,12 @@ const styles = StyleSheet.create({
     color: theme[400],
     borderRadius: 50,
     padding: 5,
+    paddingHorizontal: 8,
     height: 35,
     textAlign: "center",
     textAlignVertical: "center",
     margin: 4,
     fontSize: 13,
-    minWidth: "30%",
     fontWeight: "700",
   },
   selectedTag: {
