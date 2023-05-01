@@ -25,7 +25,7 @@ export function ForgotPassword(props: ForgotPasswordProps) {
 
   return (
     <Form form={form}>
-      <LoginContainer>
+      <LoginContainer title="Mot de passe oublié">
         <Input
           style={styles.input}
           label="Email"

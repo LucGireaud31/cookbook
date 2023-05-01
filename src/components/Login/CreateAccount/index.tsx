@@ -36,7 +36,7 @@ export function CreateAccount(props: CreateAccountProps) {
   const input4 = useRef<TextInput>(null);
 
   return (
-    <LoginContainer>
+    <LoginContainer title="Création de mon compte">
       <Form form={form}>
         <Input
           style={styles.input}

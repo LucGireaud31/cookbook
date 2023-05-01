@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import { View, StyleSheet, Text, Dimensions, TextInput } from "react-native";
-import { theme } from "../../theme/colors";
+import { StyleSheet, Text, Dimensions, TextInput, View } from "react-native";
+import { gray, theme } from "../../theme/colors";
 import { Button } from "../shared/Button";
 import { Form } from "../shared/Form";
 import Toast from "react-native-toast-message";
@@ -18,6 +18,9 @@ import { useEffect, useRef } from "react";
 import { useNavigation } from "../../hooks/useNavigation";
 import { LoginContainer } from "./LoginContainer";
 import { InputPassword } from "../shared/form/InputPassword";
+import { Divider } from "../shared/Divider";
+import { GoogleConnectionButton } from "./GoogleConnectionButton";
+import { ConnexionButton } from "../shared/ConnexionButton";
 
 interface LoginProps {}
 
@@ -106,14 +109,21 @@ export function Login(props: LoginProps) {
           style={styles.button}
           onPress={form.handleSubmit(onSubmit)}
         >
-          Valider
+          Connexion
         </Button>
-        <Text
-          style={styles.createAccount}
-          onPress={() => navigate("createAccount")}
-        >
-          Créer un compte gratuitement
-        </Text>
+        <Divider
+          style={{ backgroundColor: gray[300], marginVertical: 40 }}
+          label="OU"
+        />
+        <View style={styles.createAccountContainer}>
+          <GoogleConnectionButton />
+          <ConnexionButton
+            icon={require("./email.png")}
+            label="Continuer avec un mail"
+            onPress={() => navigate("createAccount")}
+            style={{ marginTop: 10 }}
+          />
+        </View>
       </LoginContainer>
     </Form>
   );
@@ -135,5 +145,8 @@ const styles = StyleSheet.create({
   forgotPassword: {
     alignSelf: "flex-start",
     textDecorationLine: "underline",
+  },
+  createAccountContainer: {
+    margin: 5,
   },
 });
