@@ -8,14 +8,10 @@ import { useNavigation } from "../../../hooks/useNavigation";
 import { IconButton } from "../../shared/IconButton";
 import { ShareRecipeModal, ShareRecipeModalRef } from "./ShareRecipeModal";
 import { TRecipe } from "../../../types/recipe";
-import { generatePdfUri } from "../../../utils/pdf";
 import {
-  createDownloadResumable,
-  documentDirectory,
-  getContentUriAsync,
-} from "expo-file-system";
-import { startActivityAsync } from "expo-intent-launcher";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+  DisplayRecipePdfLoaderModal,
+  DisplayRecipePdfLoaderModalRef,
+} from "./DisplayRecipePdfLoaderModal";
 
 interface RecipeActionProps {
   recipe: TRecipe;
@@ -26,6 +22,7 @@ export function RecipeAction(props: RecipeActionProps) {
 
   const deletionModalRef = useRef<DeletionModalRef>(null);
   const shareRecipeRef = useRef<ShareRecipeModalRef>(null);
+  const pdfLoaderRef = useRef<DisplayRecipePdfLoaderModalRef>(null);
 
   const [visible, setVisible] = useState(false);
 
@@ -39,37 +36,6 @@ export function RecipeAction(props: RecipeActionProps) {
   function handleDeleteRecipe() {
     deleteRecipeMutation(recipe.id);
     navigation.goBack();
-  }
-
-  async function handleDownload() {
-    closeMenu();
-    Toast.show({
-      text1: "Génération du pdf en cours",
-      text2: "Ca ne sera pas long, promis 😉",
-      type: "info",
-    });
-    const downloadResumable = createDownloadResumable(
-      generatePdfUri(recipe.id, recipe.name),
-      documentDirectory + `${recipe.name}.pdf`
-    );
-    try {
-      const result = await downloadResumable.downloadAsync();
-      if (result) {
-        const cUri = await getContentUriAsync(result.uri);
-
-        await startActivityAsync("android.intent.action.VIEW", {
-          data: cUri,
-          flags: 1,
-          type: "application/pdf",
-        });
-      }
-    } catch (e) {
-      Toast.show({
-        text1: "Une erreure est survenue",
-        text2: "Veuillez réessayer dans quelques minutes 😟",
-        type: "error",
-      });
-    }
   }
 
   return (
@@ -94,7 +60,10 @@ export function RecipeAction(props: RecipeActionProps) {
           leadingIcon={"share"}
         />
         <Menu.Item
-          onPress={() => handleDownload()}
+          onPress={() => {
+            closeMenu();
+            pdfLoaderRef.current?.onOpen(recipe.id, recipe.name);
+          }}
           title="Afficher en pdf"
           leadingIcon={"file"}
         />
@@ -110,6 +79,7 @@ export function RecipeAction(props: RecipeActionProps) {
       </Menu>
       <DeletionModal ref={deletionModalRef} onDelete={handleDeleteRecipe} />
       <ShareRecipeModal ref={shareRecipeRef} />
+      <DisplayRecipePdfLoaderModal ref={pdfLoaderRef} />
     </View>
   );
 }
