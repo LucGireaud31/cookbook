@@ -1,7 +1,10 @@
+import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { useNavigation } from "../../../hooks/useNavigation";
-import { useCreateUser } from "../../../services/credentials";
+import { tokenAtom } from "../../../Navigator";
+import { setTokenLocalStorage } from "../../../services/asyncStorage";
+import { useCreateUser, useLoginOAuth } from "../../../services/credentials";
 import { theme } from "../../../theme/colors";
 import { TCreateUser } from "../../../types/credentials";
 import { StackComponent } from "../../../types/reactNavigation";
@@ -28,20 +31,39 @@ export function ShareMyBook(props: ShareMyBookProps) {
   const [account, setAccount] = useState<TCreateUser | undefined>(
     route?.params
   );
+  const setToken = useSetAtom(tokenAtom);
+
+  const onCreateUser = useCreateUser();
+  const loginOAuthUser = useLoginOAuth();
 
   if (!account) {
     goBack();
     return null;
   }
 
-  const onCreateUser = useCreateUser();
-
   async function onSubmit() {
-    const res = await onCreateUser(account!);
+    const token = route?.params.oAuth;
 
-    if (res) {
-      goBack();
-      goBack();
+    if (token) {
+      const data = await loginOAuthUser(
+        token,
+        "google",
+        account?.existingHome ?? ""
+      );
+      const newToken = data?.needHome ? null : data?.data;
+
+      if (newToken) {
+        setTokenLocalStorage(newToken);
+        setToken(newToken);
+      }
+      return;
+    } else {
+      const res = await onCreateUser(account!);
+
+      if (res) {
+        goBack();
+        goBack();
+      }
     }
   }
 

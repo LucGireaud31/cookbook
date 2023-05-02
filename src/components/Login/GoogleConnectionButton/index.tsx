@@ -1,8 +1,12 @@
 import { ConnexionButton } from "../../shared/ConnexionButton";
 import * as WebBrowser from "expo-web-browser";
 import { useAuthRequest } from "expo-auth-session/providers/google";
-import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { useEffect } from "react";
+import { useLoginOAuth } from "../../../services/credentials";
+import { useNavigation } from "../../../hooks/useNavigation";
+import { setTokenLocalStorage } from "../../../services/asyncStorage";
+import { useSetAtom } from "jotai";
+import { tokenAtom } from "../../../Navigator";
 
 interface GoogleConnectionButtonProps {}
 
@@ -16,7 +20,10 @@ const androidClientId =
 export function GoogleConnectionButton(props: GoogleConnectionButtonProps) {
   const {} = props;
 
-  const [userInfo, setUserInfo] = useState(null);
+  const loginOAuthUser = useLoginOAuth();
+  const setToken = useSetAtom(tokenAtom);
+
+  const navigation = useNavigation();
 
   const [_, response, promptAsync] = useAuthRequest({
     androidClientId,
@@ -24,36 +31,31 @@ export function GoogleConnectionButton(props: GoogleConnectionButtonProps) {
   });
 
   useEffect(() => {
-    if (response?.type === "success") {
-      getUserInfo(response.authentication?.accessToken ?? "");
-    }
+    (async () => {
+      if (
+        response?.type === "success" &&
+        response.authentication?.accessToken
+      ) {
+        const token = response.authentication?.accessToken;
+
+        const res = await loginOAuthUser(token, "google");
+        const newToken = res?.data;
+
+        if (res?.needHome) {
+          navigation.navigate("shareMyBook", { oAuth: res.data });
+        } else if (newToken) {
+          setTokenLocalStorage(newToken);
+          setToken(newToken);
+        }
+      }
+    })();
   }, [response]);
 
-  async function getUserInfo(token: string) {
-    try {
-      const response = await fetch(
-        "https://www.googleapis.com/userinfo/v2/me",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      const user = await response.json();
-
-      const { email, id } = user;
-
-      setUserInfo(user);
-    } catch (error) {}
-  }
-
   return (
-    <>
-      <ConnexionButton
-        icon={require("./google.png")}
-        label="Continuer avec google"
-        onPress={() => promptAsync()}
-      />
-      <Text>{JSON.stringify(userInfo)}</Text>
-    </>
+    <ConnexionButton
+      icon={require("./google.png")}
+      label="Continuer avec google"
+      onPress={() => promptAsync()}
+    />
   );
 }

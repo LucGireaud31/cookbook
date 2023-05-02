@@ -108,7 +108,6 @@ export function useCreateUser() {
 
   async function onMutate(user: TCreateUser) {
     try {
-      console.log(user);
       await mutation({
         variables: { user },
       });
@@ -121,7 +120,6 @@ export function useCreateUser() {
       });
       return true;
     } catch (e: any) {
-      console.error(e);
       Toast.show({
         type: "error",
         text1: "Erreur",
@@ -149,4 +147,38 @@ export function useHomeName() {
   const { data, ...rest } = useQuery<{ homeName: string }>(queryGetHomeName);
 
   return data?.homeName;
+}
+
+// --------------- //
+// --Login OAuth-- //
+// --------------- //
+
+const mutationCreateOAuth = gql`
+  mutation createOAuth($token: String!, $type: String!, $newHome: String) {
+    createOAuthUser(token: $token, type: $type, newHome: $newHome)
+  }
+`;
+
+export function useLoginOAuth() {
+  const [mutate, ...rest] = useMutation<{ createOAuthUser?: string }>(
+    mutationCreateOAuth
+  );
+
+  async function mutation(token: string, type: string, newHome?: string) {
+    try {
+      const { data } = await mutate({ variables: { token, type, newHome } });
+      return { data: data?.createOAuthUser, needHome: false };
+    } catch (err: any) {
+      const code = (err as ApolloError).graphQLErrors[0].extensions.code;
+
+      if (code == 400) {
+        return {
+          data: token,
+          needHome: true,
+        };
+      }
+    }
+  }
+
+  return mutation;
 }
