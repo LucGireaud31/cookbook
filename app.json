@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.gireaud.luc.cookbook",
-      "versionCode": 54
+      "versionCode": 56
     },
     "web": {
       "favicon": "./assets/favicon.png"
