@@ -29,6 +29,7 @@ import { getCurrentProjectVersion } from "../../utils/project";
 import { getHistory } from "../../services/history";
 import { HistoryModal, HistoryModalRef } from "../History";
 import { LoadingPage } from "../shared/LoadingPage";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const LIST_SIZE = 20;
 
@@ -37,6 +38,10 @@ export const filterAtom = atom<FilterProps | null>(null);
 export function Home() {
   const [page, setPage] = useState(1);
   const [pageMax, setPageMax] = useState(1);
+
+  const [filteredTypes, setFilteredTypes] = useState<string[]>();
+
+  const debouncedFilteredTypes = useDebounce(filteredTypes, 300);
 
   const historyRef = useRef<HistoryModalRef>(null);
 
@@ -121,6 +126,12 @@ export function Home() {
   }, [filterValue]);
 
   useEffect(() => {
+    if (debouncedFilteredTypes) {
+      onRefetch();
+    }
+  }, [debouncedFilteredTypes]);
+
+  useEffect(() => {
     (async () => {
       // Default filter in local storage
       const filter = await getFilterLocalStorage();
@@ -146,7 +157,7 @@ export function Home() {
     })();
   }, []);
 
-  if (loadingRecipes || loadingTypes) {
+  if ((loadingRecipes || loadingTypes) && recipes == null) {
     return <LoadingPage label="Chargement des recettes..." />;
   }
 
@@ -167,17 +178,16 @@ export function Home() {
               isSelected={form.watch("types")?.includes(type.id)}
               onPress={() => {
                 const selectedTypes = form.getValues("types");
+                let newValue;
                 if (selectedTypes?.includes(type.id)) {
                   // Remove current type
-                  form.setValue(
-                    "types",
-                    selectedTypes?.filter((t) => t != type.id)
-                  );
+                  newValue = selectedTypes?.filter((t) => t != type.id);
                 } else {
                   // Add current type
-                  form.setValue("types", [...(selectedTypes ?? []), type.id]);
+                  newValue = [...(selectedTypes ?? []), type.id];
                 }
-                onRefetch();
+                form.setValue("types", newValue);
+                setFilteredTypes(newValue);
               }}
             />
           ))}

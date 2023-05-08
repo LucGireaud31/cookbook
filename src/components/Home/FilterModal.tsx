@@ -32,17 +32,15 @@ export const FilterModal = forwardRef<FilterModalRef, FilterModalProps>(
     return (
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          onSubmit(form.getValues());
+          onClose();
+        }}
         animationType="slide"
         containerStyle={styles.container}
         title="Filtrer les recettes"
         titleStyle={styles.modalTitle}
         closeButton={true}
-        submitButtonLabel="Appliquer"
-        onSubmit={() => {
-          onSubmit(form.getValues());
-          onClose();
-        }}
       >
         <Form form={form}>
           <NoteInput
@@ -51,11 +49,6 @@ export const FilterModal = forwardRef<FilterModalRef, FilterModalProps>(
             subLabel={form.watch("minNote")}
           />
           <TagInput label="Tags" tags={tags} {...form.register("tags")} />
-          {/* <YesNoInput
-            label="Favoris seulement"
-            subLabel={form.watch("isFavorite") ? "oui" : "non"}
-            {...form.register("isFavorite")}
-          /> */}
           <MultiIngredientInput
             label="Ingredients"
             subLabel={`${nbSelectedIngredients} ${
