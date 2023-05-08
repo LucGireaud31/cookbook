@@ -10,6 +10,21 @@ interface SVGProps {
   weight?: "bold" | "normal";
 }
 
+export function LinkIcon(props: SVGProps) {
+  const { size = 32, color = "black" } = props;
+  return (
+    <Svg
+      width={size}
+      height={size}
+      fill={color}
+      viewBox="0 0 256 256"
+      {...props}
+    >
+      <Path d="M136.37 187.53a12 12 0 010 17l-5.94 5.94a60 60 0 01-84.88-84.88l24.12-24.11A60 60 0 01152 99a12 12 0 11-16 18 36 36 0 00-49.37 1.47l-24.1 24.08a36 36 0 0050.92 50.92l5.94-5.94a12 12 0 0116.98 0zm74.08-142a60.09 60.09 0 00-84.88 0l-5.94 5.94a12 12 0 0017 17l5.94-5.94a36 36 0 0150.92 50.92l-24.11 24.12A36 36 0 01120 139a12 12 0 10-16 18 60 60 0 0082.3-2.43l24.12-24.11a60.09 60.09 0 00.03-84.91z" />
+    </Svg>
+  );
+}
+
 export function HistoryIcon(props: SVGProps) {
   const { size = 25, color = "black" } = props;
   return (

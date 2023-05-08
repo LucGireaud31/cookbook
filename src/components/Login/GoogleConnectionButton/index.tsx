@@ -8,7 +8,10 @@ import { setTokenLocalStorage } from "../../../services/asyncStorage";
 import { useSetAtom } from "jotai";
 import { tokenAtom } from "../../../Navigator";
 
-interface GoogleConnectionButtonProps {}
+interface GoogleConnectionButtonProps {
+  onSubmitingBegin(): void;
+  onSubmitingEnd(): void;
+}
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -18,7 +21,7 @@ const androidClientId =
   "1090233144614-jpej1rn39n01o9bndflt4bllg2rp9jb9.apps.googleusercontent.com";
 
 export function GoogleConnectionButton(props: GoogleConnectionButtonProps) {
-  const {} = props;
+  const { onSubmitingBegin, onSubmitingEnd } = props;
 
   const loginOAuthUser = useLoginOAuth();
   const setToken = useSetAtom(tokenAtom);
@@ -36,6 +39,7 @@ export function GoogleConnectionButton(props: GoogleConnectionButtonProps) {
         response?.type === "success" &&
         response.authentication?.accessToken
       ) {
+        onSubmitingBegin();
         const token = response.authentication?.accessToken;
 
         const res = await loginOAuthUser(token, "google");
@@ -47,6 +51,7 @@ export function GoogleConnectionButton(props: GoogleConnectionButtonProps) {
           setTokenLocalStorage(newToken);
           setToken(newToken);
         }
+        onSubmitingEnd();
       }
     })();
   }, [response]);

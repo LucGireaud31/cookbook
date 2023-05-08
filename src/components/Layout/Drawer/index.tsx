@@ -13,6 +13,7 @@ import { getCurrentProjectVersion } from "../../../utils/project";
 import { HistoryModal, HistoryModalRef } from "../../History";
 import {
   HistoryIcon,
+  LinkIcon,
   LogoutIcon,
   ScanIcon,
   ShareIcon,
@@ -106,14 +107,14 @@ export function Drawer(props: DrawerProps) {
         </Link>
         <Divider style={{ marginVertical: 10 }} />
 
-        <Link icon={<ShareIcon />} onPress={shareModalRef.current?.onOpen}>
-          Partager mon compte
+        <Link icon={<LinkIcon />} onPress={shareModalRef.current?.onOpen}>
+          Associer mon compte
         </Link>
         <Link
           icon={<ScanIcon color="black" size={32} />}
           onPress={scanQrCodeModalRef.current?.onOpen}
         >
-          Dupliquer une recette d'un utilisateur
+          Récupérer une recette d'un utilisateur
         </Link>
         <Link icon={<HistoryIcon size={32} />} onPress={onNews}>
           Nouveauté

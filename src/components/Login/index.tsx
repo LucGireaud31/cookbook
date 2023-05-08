@@ -14,13 +14,14 @@ import { TCredentials } from "../../types/credentials";
 import { useSetAtom } from "jotai";
 import { tokenAtom } from "../../Navigator";
 import { Input } from "../shared/form/Input";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigation } from "../../hooks/useNavigation";
 import { LoginContainer } from "./LoginContainer";
 import { InputPassword } from "../shared/form/InputPassword";
 import { Divider } from "../shared/Divider";
 import { GoogleConnectionButton } from "./GoogleConnectionButton";
 import { ConnexionButton } from "../shared/ConnexionButton";
+import { LoadingPage } from "../shared/LoadingPage";
 
 interface LoginProps {}
 
@@ -30,6 +31,8 @@ export function Login(props: LoginProps) {
   const form = useForm<TCredentials>({
     defaultValues: { login: "", password: "" },
   });
+
+  const [isLoadingOAuth, setIsLoadingOAuth] = useState(false);
 
   const doLogin = useLogin();
   const setToken = useSetAtom(tokenAtom);
@@ -77,6 +80,8 @@ export function Login(props: LoginProps) {
     })();
   }, []);
 
+  if (isLoadingOAuth) return <LoadingPage label="Connexion en cours" />;
+
   return (
     <Form form={form}>
       <LoginContainer canGoBack={false}>
@@ -116,7 +121,10 @@ export function Login(props: LoginProps) {
           label="OU"
         />
         <View style={styles.createAccountContainer}>
-          <GoogleConnectionButton />
+          <GoogleConnectionButton
+            onSubmitingBegin={() => setIsLoadingOAuth(true)}
+            onSubmitingEnd={() => setIsLoadingOAuth(false)}
+          />
           <ConnexionButton
             icon={require("./email.png")}
             label="Continuer avec un mail"
