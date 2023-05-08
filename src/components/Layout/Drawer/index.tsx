@@ -13,10 +13,10 @@ import { getCurrentProjectVersion } from "../../../utils/project";
 import { HistoryModal, HistoryModalRef } from "../../History";
 import {
   HistoryIcon,
+  LightIcon,
   LinkIcon,
   LogoutIcon,
   ScanIcon,
-  ShareIcon,
 } from "../../icons/icons";
 import {
   ScanQrCodeModal,
@@ -116,6 +116,13 @@ export function Drawer(props: DrawerProps) {
         >
           Récupérer une recette d'un utilisateur
         </Link>
+        <Link
+          icon={<LightIcon color="black" size={32} />}
+          onPress={() => navigate("idea")}
+        >
+          Proposer une idée
+        </Link>
+
         <Link icon={<HistoryIcon size={32} />} onPress={onNews}>
           Nouveauté
         </Link>

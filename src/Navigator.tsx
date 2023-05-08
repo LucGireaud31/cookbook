@@ -28,6 +28,7 @@ import * as Linking from "expo-linking";
 import { ResetPassword } from "./components/Login/ResetPassword";
 import { StatusBar } from "expo-status-bar";
 import { ShareMyBook } from "./components/Login/CreateAccount/ShareMyBook";
+import { Idea } from "./components/Idea";
 
 export const tokenAtom = atom<string | null>(null);
 
@@ -117,6 +118,11 @@ export function Navigator() {
           name="tags"
           component={Tags}
           options={{ headerLeft: BackButton, title: "Tags" }}
+        />
+        <Stack.Screen
+          name="idea"
+          component={Idea}
+          options={{ headerLeft: BackButton, title: "Proposer une idée" }}
         />
       </Stack.Navigator>
     );
