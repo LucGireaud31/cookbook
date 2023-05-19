@@ -60,7 +60,7 @@ export function CreateAccount(props: CreateAccountProps) {
           rules={{
             minLength: 7,
           }}
-          info="Le mail sera seulement utilisé en cas de perte mot de passe. Il ne sera en aucun cas utilisé à des fins commerciaux où pour de la publicité."
+          info="Le mail sera seulement utilisé pour le fonctionnement de votre livre de recettes. Il ne sera en aucun cas utilisé à des fins commerciaux où pour de la publicité."
         />
         <InputPassword
           inputRef={input3}
