@@ -5,17 +5,26 @@ import Toast from "react-native-toast-message";
 import { useNavigation } from "../../hooks/useNavigation";
 import { useDuplicateRecipe } from "../../services/recipes";
 import { TQrCode } from "../../types/recipe";
+import { sleep } from "../../utils/promise";
 
 interface ScanRecipeFromUserProps {}
 
 export function ScanRecipeFromUser(props: ScanRecipeFromUserProps) {
   const {} = props;
   const [isScanned, setIsScanned] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(true);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getPermission();
-    setIsScanned(false);
+    (async () => {
+      await sleep(400);
+      setIsLoading(true);
+      setIsScanned(false);
+
+      await getPermission();
+      setIsLoading(false);
+    })();
   }, []);
 
   async function getPermission() {
@@ -60,10 +69,21 @@ export function ScanRecipeFromUser(props: ScanRecipeFromUserProps) {
       });
     }
   }
+
+  if (isLoading)
+    return (
+      <View style={styles.container}>
+        <View>
+          <Text>Chargement de l'appareil photo</Text>
+          <Text>Ca ne sera pas long, promis 😉</Text>
+        </View>
+      </View>
+    );
+
   if (!hasPermission)
     return (
       <Text>
-        Veuillez accepter Mon livre de recettes à accéder à votre appareil photo
+        Veuillez autoriser l'application à accéder à votre appareil photo
       </Text>
     );
 
