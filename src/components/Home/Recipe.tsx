@@ -9,6 +9,7 @@ import {
 import { useNavigation } from "../../hooks/useNavigation";
 import { gray, theme } from "../../theme/colors";
 import { TRecipeItem } from "../../types/recipe";
+import { wrapText } from "../../utils/string";
 import { StarInput } from "../shared/StarInput";
 
 interface RecipeProps {
@@ -32,7 +33,7 @@ export function Recipe(props: RecipeProps) {
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: recipe.image }} />
       </View>
-      <Text style={styles.label}>{recipe.name}</Text>
+      <Text style={styles.label}>{wrapText(recipe.name, 20)}</Text>
       <StarInput size={15} note={recipe.note} isDisabled={true} />
     </TouchableOpacity>
   );

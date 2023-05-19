@@ -29,6 +29,7 @@ import { ResetPassword } from "./components/Login/ResetPassword";
 import { StatusBar } from "expo-status-bar";
 import { ShareMyBook } from "./components/Login/CreateAccount/ShareMyBook";
 import { Idea } from "./components/Idea";
+import { ScanRecipeFromUser } from "./components/ScanRecipeFromUser";
 
 export const tokenAtom = atom<string | null>(null);
 
@@ -123,6 +124,11 @@ export function Navigator() {
           name="idea"
           component={Idea}
           options={{ headerLeft: BackButton, title: "Proposer une idée" }}
+        />
+        <Stack.Screen
+          name="scanRecipeFromUser"
+          component={ScanRecipeFromUser}
+          options={{ headerLeft: BackButton, title: "Scanner une recette" }}
         />
       </Stack.Navigator>
     );

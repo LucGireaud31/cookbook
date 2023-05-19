@@ -2,13 +2,10 @@ import { useApolloClient } from "@apollo/client";
 import { useSetAtom } from "jotai";
 import { ReactNode, useRef } from "react";
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import Toast from "react-native-toast-message";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { tokenAtom } from "../../../Navigator";
 import { setTokenLocalStorage } from "../../../services/asyncStorage";
 import { getHistory } from "../../../services/history";
-import { useDuplicateRecipe } from "../../../services/recipes";
-import { TQrCode } from "../../../types/recipe";
 import { getCurrentProjectVersion } from "../../../utils/project";
 import { HistoryModal, HistoryModalRef } from "../../History";
 import {
@@ -18,10 +15,6 @@ import {
   LogoutIcon,
   ScanIcon,
 } from "../../icons/icons";
-import {
-  ScanQrCodeModal,
-  ScanQrCodeModalRef,
-} from "../../Login/ScanQrCodeModal";
 import { Divider } from "../../shared/Divider";
 import { ShareHomeModal, ShareHomeModalRef } from "./ShareHomeModal";
 import * as Linking from "expo-linking";
@@ -35,12 +28,9 @@ export function Drawer(props: DrawerProps) {
 
   const client = useApolloClient();
 
-  const duplicateRecipe = useDuplicateRecipe();
-
   const setToken = useSetAtom(tokenAtom);
 
   const shareModalRef = useRef<ShareHomeModalRef>(null);
-  const scanQrCodeModalRef = useRef<ScanQrCodeModalRef>(null);
   const historyRef = useRef<HistoryModalRef>(null);
 
   function logOut() {
@@ -54,37 +44,6 @@ export function Drawer(props: DrawerProps) {
     const history = await getHistory(client, realVersion);
     // Display message
     historyRef.current?.onOpen(history);
-  }
-
-  async function onScan(data: string) {
-    try {
-      const {
-        data: { id },
-        action,
-      }: TQrCode = JSON.parse(data);
-
-      if (action == "duplicateRecipe") {
-        try {
-          await duplicateRecipe(id);
-          Toast.show({
-            text1: "Copie réalisée avec succès",
-            type: "success",
-          });
-        } catch {
-          Toast.show({
-            text1: "Copie impossible à réaliser",
-            text2: "Une erreur imprévue est survenue",
-            type: "error",
-          });
-        }
-      }
-    } catch {
-      Toast.show({
-        text1: "QR Code invalide",
-        text2: "Veuillez réessayer",
-        type: "error",
-      });
-    }
   }
 
   return (
@@ -112,7 +71,7 @@ export function Drawer(props: DrawerProps) {
         </Link>
         <Link
           icon={<ScanIcon color="black" size={32} />}
-          onPress={scanQrCodeModalRef.current?.onOpen}
+          onPress={() => navigate("scanRecipeFromUser")}
         >
           Récupérer une recette d'un utilisateur
         </Link>
@@ -138,11 +97,6 @@ export function Drawer(props: DrawerProps) {
         <Text style={styles.underlined}>À propos du développeur</Text>
       </TouchableOpacity>
       <ShareHomeModal ref={shareModalRef} />
-      <ScanQrCodeModal
-        ref={scanQrCodeModalRef}
-        label="Scanner un Qr Code pour recevoir la recette associée"
-        onScan={onScan}
-      />
       <HistoryModal ref={historyRef} />
     </View>
   );

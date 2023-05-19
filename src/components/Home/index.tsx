@@ -30,7 +30,7 @@ import { getHistory } from "../../services/history";
 import { HistoryModal, HistoryModalRef } from "../History";
 import { LoadingPage } from "../shared/LoadingPage";
 
-const LIST_SIZE = 20;
+const LIST_SIZE = 100;
 
 export const filterAtom = atom<FilterProps | null>(null);
 
@@ -196,41 +196,46 @@ export function Home() {
             )}
           />
         </Container>
-        <View style={styles.paginationContainer}>
-          <Button
-            onPress={() => onRefetch(1)}
-            fontWeight="800"
-            isDisabled={page == 1}
-          >
-            Début
-          </Button>
-          <IconButton
-            onPress={onBefore}
-            icon={<CaretIcon orientation="left" />}
-            isDisabled={page == 1}
-          />
+        {pageMax > 1 && (
+          <View style={styles.paginationContainer}>
+            <Button
+              onPress={() => onRefetch(1)}
+              fontWeight="800"
+              isDisabled={page == 1}
+            >
+              Début
+            </Button>
+            <IconButton
+              onPress={onBefore}
+              icon={<CaretIcon orientation="left" />}
+              isDisabled={page == 1}
+            />
 
-          <Text style={styles.paginationLabel}>{`${page}/${
-            pageMax == 0 ? 1 : pageMax
-          }`}</Text>
-          <IconButton
-            onPress={onAfter}
-            icon={<CaretIcon orientation="right" />}
-            isDisabled={page == pageMax || pageMax < 1}
-          />
-          <Button
-            onPress={() => onRefetch(pageMax)}
-            fontWeight="800"
-            isDisabled={page == pageMax || pageMax < 1}
-          >
-            Fin
-          </Button>
-          <IconButton
-            style={styles.addButton}
-            icon={<PlusIcon color="white" />}
-            onPress={onAddRecipe}
-          />
-        </View>
+            <Text style={styles.paginationLabel}>{`${page}/${
+              pageMax == 0 ? 1 : pageMax
+            }`}</Text>
+            <IconButton
+              onPress={onAfter}
+              icon={<CaretIcon orientation="right" />}
+              isDisabled={page == pageMax || pageMax < 1}
+            />
+            <Button
+              onPress={() => onRefetch(pageMax)}
+              fontWeight="800"
+              isDisabled={page == pageMax || pageMax < 1}
+            >
+              Fin
+            </Button>
+          </View>
+        )}
+        <IconButton
+          style={{
+            ...styles.addButton,
+            ...(pageMax < 2 && { bottom: 20, right: 20 }),
+          }}
+          icon={<PlusIcon color="white" />}
+          onPress={onAddRecipe}
+        />
         <FilterModal
           onSubmit={handleFilterModalSubmit}
           isOpen={isFilterOpen}
@@ -284,5 +289,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme[300],
     borderRadius: 30,
     padding: 10,
+    borderWidth: 2,
+    borderColor: "white",
   },
 });

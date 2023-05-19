@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useController } from "react-hook-form";
 import { StyleSheet, TouchableOpacity, Text, View, Image } from "react-native";
 import { CameraModal, CameraModalRef } from "../CameraModal";
@@ -67,6 +67,11 @@ export function ImageInput(props: ImageInputProps) {
       changeImage(result.assets[0].uri);
     }
   }
+
+  useEffect(() => {
+    setPickPhoto(false);
+  }, []);
+
   return (
     <FieldContainer label={label} error={error} isRequired={isRequired}>
       {field.value ? (

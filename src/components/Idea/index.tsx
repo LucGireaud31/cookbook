@@ -42,11 +42,12 @@ export function Idea(props: IdeaProps) {
             - Reporter un <Highlight>bug</Highlight> ?
           </Text>
           <Text style={styles.h2}>
-            - Me faire part de votre <Highlight>expérience</Highlight> ?
+            - Faire part de votre <Highlight>expérience</Highlight> ?
           </Text>
         </View>
         <Text style={[styles.h2, { marginTop: 30 }]}>
-          N'hésitez pas à me faire un retour, j'accepte même les critiques 😉
+          N'hésitez pas à faire un retour, le développeur de l'application
+          accepte même les critiques 😉
         </Text>
         <DumpbTextInput
           numberOfLines={10}
