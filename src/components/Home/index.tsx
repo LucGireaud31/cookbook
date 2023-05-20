@@ -9,7 +9,7 @@ import { FilterProps, useRecipesPagination } from "../../services/recipes";
 import { TRecipeItem } from "../../types/recipe";
 import { theme } from "../../theme/colors";
 import { Button } from "../shared/Button";
-import { CaretIcon, PlusIcon } from "../icons/icons";
+import { CaretIcon } from "../icons/icons";
 import { Recipe } from "./Recipe";
 import { useNavigation } from "../../hooks/useNavigation";
 import { FilterModal } from "./FilterModal";
@@ -228,14 +228,6 @@ export function Home() {
             </Button>
           </View>
         )}
-        {/* <IconButton
-          style={{
-            ...styles.addButton,
-            ...(pageMax < 2 && { bottom: 20, right: 20 }),
-          }}
-          icon={<PlusIcon color="white" />}
-          onPress={onAddRecipe}
-        /> */}
         <FilterModal
           onSubmit={handleFilterModalSubmit}
           isOpen={isFilterOpen}

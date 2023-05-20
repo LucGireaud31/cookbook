@@ -72,6 +72,14 @@ export function EditForm(props: EditFormProps) {
   const recipe: TRecipe | null = route?.params?.recipe ?? null;
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      form.reset();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     navigation.setOptions({
       rightIcon: null,
       title: wrapText(recipe?.name ?? "Nouvelle recette", 20),
@@ -278,7 +286,8 @@ export function EditForm(props: EditFormProps) {
 
 const styles = StyleSheet.create({
   button: {
-    marginVertical: 10,
+    marginBottom: 30,
+    marginTop: 10,
     marginHorizontal: 15,
   },
 });

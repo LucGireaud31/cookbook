@@ -38,9 +38,17 @@ export function RecipeAction(props: RecipeActionProps) {
     navigation.goBack();
   }
 
+  function handleUpdateRecipe() {
+    closeMenu();
+    navigation.navigate("recipeEdit", { recipe });
+  }
+
   return (
     <View style={styles.container}>
       <Menu
+        contentStyle={{
+          backgroundColor: "white",
+        }}
         visible={visible}
         onDismiss={closeMenu}
         anchor={
@@ -52,11 +60,16 @@ export function RecipeAction(props: RecipeActionProps) {
         }
       >
         <Menu.Item
+          onPress={handleUpdateRecipe}
+          title="Modifier"
+          leadingIcon="pencil"
+        />
+        <Menu.Item
           onPress={() => {
             closeMenu();
             shareRecipeRef.current?.onOpen(recipe.id, recipe.name);
           }}
-          title="Partager la recette"
+          title="Partager"
           leadingIcon={"share"}
         />
         <Menu.Item

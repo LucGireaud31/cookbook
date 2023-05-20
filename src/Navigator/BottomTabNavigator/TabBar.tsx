@@ -3,20 +3,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   TouchableHighlight,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { background, theme } from "../../theme/colors";
-import {
-  HomeIcon,
-  PlusIcon,
-  ShopIcon,
-  TagIcon,
-} from "../../components/icons/icons";
+import { HomeIcon, PlusIcon, ShopIcon } from "../../components/icons/icons";
 import { ReactNode } from "react";
 import { useNavigation } from "../../hooks/useNavigation";
-import Svg, { Path } from "react-native-svg";
 
 const HOME_METRICS = {
   padding: 8,
@@ -79,7 +72,11 @@ function RouteIcon({
   const { navigate } = useNavigation();
 
   return (
-    <TouchableOpacity onPress={() => navigate(routeName)}>
+    <TouchableOpacity
+      onPress={() => {
+        navigate(routeName);
+      }}
+    >
       <View style={styles.routeIconContainer}>
         {isSelected ? selectedIcon : icon}
         <Text

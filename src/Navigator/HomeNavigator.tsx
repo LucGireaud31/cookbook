@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { BackButton } from ".";
 import { Home } from "../components/Home";
 import { DrawerIcon } from "../components/icons/icons";
