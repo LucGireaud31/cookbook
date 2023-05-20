@@ -10,7 +10,6 @@ import { background, theme } from "../../theme/colors";
 import { HomeIcon, PlusIcon, ShopIcon } from "../../components/icons/icons";
 import { ReactNode } from "react";
 import { useNavigation } from "../../hooks/useNavigation";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { showMaintenanceToast } from "../../utils/toast";
 
 const HOME_METRICS = {
@@ -25,7 +24,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       <View />
       <RouteIcon
         label="Courses"
-        isDisabled
+        // isDisabled
         isSelected={state.index == 2}
         icon={<ShopIcon />}
         selectedIcon={<ShopIcon isFilled={true} />}

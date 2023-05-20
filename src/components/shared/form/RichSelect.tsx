@@ -1,15 +1,7 @@
 import { capitalize } from "lodash";
 import { useMemo, useRef, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import {
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { ENV } from "../../../../env";
 import { useIngredients } from "../../../services/ingredients";
 import { useAllMiniRecipes } from "../../../services/recipes";
@@ -17,10 +9,11 @@ import { theme } from "../../../theme/colors";
 import { TRecipeIngredient } from "../../../types/ingredients";
 import { RecipeQuantityTypeEnum } from "../../../types/recipe";
 import { generateShortUID } from "../../../utils/crypto";
-import { normalize, wrapText } from "../../../utils/string";
+import { normalize } from "../../../utils/string";
 import { GlassIcon } from "../../icons/icons";
 import { InputFormProps, useFieldError } from "../Form";
 import { FieldContainer } from "../Form/FieldContainer";
+import { IngredientButton } from "./IngredientButton";
 import { Input } from "./Input";
 
 interface RichSelectProps extends InputFormProps {
@@ -196,7 +189,7 @@ export function RichSelect(props: RichSelectProps) {
           ]}
         >
           {getValues("id") != "" && (
-            <Ingredient
+            <IngredientButton
               name={getValues("name")}
               image={getValues("image")}
               isSelected={true}
@@ -204,7 +197,7 @@ export function RichSelect(props: RichSelectProps) {
             />
           )}
           {filteredIngredients.map((ing) => (
-            <Ingredient
+            <IngredientButton
               key={ing.id}
               name={ing.name}
               image={ing.image}
@@ -227,7 +220,7 @@ export function RichSelect(props: RichSelectProps) {
             !isCreatingIngredient &&
             ingredients.filter((i) => normalize(i.name) == normalize(search))
               .length == 0 && (
-              <Ingredient
+              <IngredientButton
                 image={defaultIngredient!.image}
                 isRecipe={defaultIngredient!.isRecipe}
                 isSelected={false}
@@ -250,47 +243,6 @@ export function RichSelect(props: RichSelectProps) {
   );
 }
 
-function Ingredient({
-  name,
-  image,
-  onPress,
-  isSelected,
-  isRecipe,
-}: {
-  name: string;
-  image: string;
-  onPress?(): void;
-  isSelected: boolean;
-  isRecipe: boolean;
-}) {
-  return (
-    <TouchableOpacity
-      onPress={(e) => {
-        e.stopPropagation();
-        onPress?.();
-      }}
-    >
-      <View
-        style={[
-          styles.ingredient,
-          isSelected && {
-            backgroundColor: theme[400],
-            opacity: 1,
-          },
-        ]}
-      >
-        <Image
-          style={isRecipe ? styles.recipeIcon : styles.ingredientIcon}
-          source={{ uri: image }}
-        />
-        <Text style={isRecipe ? styles.recipeLabel : styles.ingredientLabel}>
-          {wrapText(name, 20)}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     borderRadius: 5,
@@ -307,44 +259,5 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 5,
     flexDirection: "row",
-  },
-  ingredient: {
-    height: 100,
-    width: 100,
-    borderRadius: 20,
-    backgroundColor: theme[300] + "90",
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 5,
-    opacity: 0.7,
-  },
-  recipeIcon: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-    borderRadius: 20,
-  },
-  recipeLabel: {
-    color: "white",
-    fontWeight: "500",
-    marginTop: 4,
-    textAlign: "center",
-    position: "absolute",
-    bottom: 5,
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 5,
-    backgroundColor: theme[400],
-  },
-  ingredientIcon: {
-    width: 60,
-    height: 60,
-    resizeMode: "contain",
-  },
-  ingredientLabel: {
-    color: "white",
-    fontWeight: "500",
-    marginTop: 4,
-    textAlign: "center",
   },
 });

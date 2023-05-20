@@ -1,4 +1,5 @@
 const devBase = "http://192.168.1.79:3000";
+const betaBase = "http://176.150.56.209:3012";
 const prodBase = "http://176.150.56.209:3011";
 
 export const ENV = {

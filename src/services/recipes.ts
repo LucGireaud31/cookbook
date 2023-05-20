@@ -1,15 +1,8 @@
-import {
-  ApolloError,
-  gql,
-  useLazyQuery,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   TMiniRecipe,
   TRecipe,
   TRecipeBody,
-  TRecipeItem,
   TRecipePagination,
 } from "../types/recipe";
 import { removeFieldInObject } from "../utils/object";
@@ -82,7 +75,7 @@ export function useDeleteRecipe() {
   async function deleteRecipe(id: string) {
     await mutation({ variables: { id } });
 
-    client.refetchQueries({ include: [queryGetRecipes] });
+    client.refetchQueries({ include: [queryGetRecipes, queryGetMiniRecipes] });
   }
 
   return deleteRecipe;
@@ -371,7 +364,7 @@ export function useUpdateRecipe() {
     );
 
     client.refetchQueries({
-      include: [queryGetRecipes],
+      include: [queryGetRecipes, queryGetMiniRecipes],
     });
   }
 

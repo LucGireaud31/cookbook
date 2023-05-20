@@ -21,5 +21,15 @@ export function normalize(value: string) {
     .replaceAll("à", "a")
     .replaceAll("ô", "o")
     .replaceAll("ù", "u")
-    .replaceAll("â", "a");
+    .replaceAll("â", "a")
+    .replaceAll("î", "i");
+}
+
+export function noramalizedCompare(s1: string, s2: string) {
+  const s1Normalized = normalize(s1);
+  const s2Normalized = normalize(s2);
+
+  return (
+    s1Normalized.includes(s2Normalized) || s2Normalized.includes(s1Normalized)
+  );
 }

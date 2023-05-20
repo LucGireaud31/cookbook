@@ -4,12 +4,9 @@ import { TypeButton } from "./TypeButton";
 import { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Text, FlatList } from "react-native";
 import { Container } from "../Layout/Container";
-import { IconButton } from "../shared/IconButton";
 import { FilterProps, useRecipesPagination } from "../../services/recipes";
 import { TRecipeItem } from "../../types/recipe";
 import { theme } from "../../theme/colors";
-import { Button } from "../shared/Button";
-import { CaretIcon } from "../icons/icons";
 import { Recipe } from "./Recipe";
 import { useNavigation } from "../../hooks/useNavigation";
 import { FilterModal } from "./FilterModal";
@@ -30,7 +27,7 @@ import { getHistory } from "../../services/history";
 import { HistoryModal, HistoryModalRef } from "../History";
 import { LoadingPage } from "../shared/LoadingPage";
 
-const LIST_SIZE = 100;
+const LIST_SIZE = 1000;
 
 export const filterAtom = atom<FilterProps | null>(null);
 
@@ -191,43 +188,12 @@ export function Home() {
           <FlatList
             data={recipes}
             numColumns={3}
+            style={{ paddingBottom: 20 }}
             renderItem={(item) => (
               <Recipe key={item.item.id} recipe={item.item} />
             )}
           />
         </Container>
-        {pageMax > 1 && (
-          <View style={styles.paginationContainer}>
-            <Button
-              onPress={() => onRefetch(1)}
-              fontWeight="800"
-              isDisabled={page == 1}
-            >
-              Début
-            </Button>
-            <IconButton
-              onPress={onBefore}
-              icon={<CaretIcon orientation="left" />}
-              isDisabled={page == 1}
-            />
-
-            <Text style={styles.paginationLabel}>{`${page}/${
-              pageMax == 0 ? 1 : pageMax
-            }`}</Text>
-            <IconButton
-              onPress={onAfter}
-              icon={<CaretIcon orientation="right" />}
-              isDisabled={page == pageMax || pageMax < 1}
-            />
-            <Button
-              onPress={() => onRefetch(pageMax)}
-              fontWeight="800"
-              isDisabled={page == pageMax || pageMax < 1}
-            >
-              Fin
-            </Button>
-          </View>
-        )}
         <FilterModal
           onSubmit={handleFilterModalSubmit}
           isOpen={isFilterOpen}

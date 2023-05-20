@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 import { TShoppingItem } from "../../types/shopping";
-import { Ingredient } from "../shared/form/MultiIngredientInput";
+import { IngredientButton } from "../shared/form/IngredientButton";
 
 interface ShoppingListItemProps {
   items: TShoppingItem[];
@@ -16,11 +16,11 @@ export function ShoppingListItem(props: ShoppingListItemProps) {
   return (
     <View style={styles.container}>
       {items.map((item) => (
-        <Ingredient
+        <IngredientButton
           key={item.id}
           name={item.name}
           image={item.image}
-          isSelected={true}
+          isSelected={false}
         />
       ))}
     </View>
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   container: {
     flexWrap: "wrap",
     flexDirection: "row",
+    marginBottom: 40,
   },
   noData: {
     fontWeight: "700",
