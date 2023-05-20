@@ -7,7 +7,55 @@ interface SVGProps {
   size?: number;
   orientation?: "left" | "right" | "top" | "bottom";
   color?: string;
-  weight?: "bold" | "normal";
+  weight?: "bold" | "normal" | "light";
+  isFilled?: boolean;
+}
+
+export function TagIcon(props: SVGProps) {
+  const { size = 32 } = props;
+  return (
+    <Svg width={size} height={size} fill="red" viewBox="0 0 256 256" {...props}>
+      <Path d="M243.31 136L144 36.69A15.86 15.86 0 00132.69 32H40a8 8 0 00-8 8v92.69A15.86 15.86 0 0036.69 144L136 243.31a16 16 0 0022.63 0l84.68-84.68a16 16 0 000-22.63zm-96 96L48 132.69V48h84.69L232 147.31zM96 84a12 12 0 11-12-12 12 12 0 0112 12z" />
+    </Svg>
+  );
+}
+
+export function ShopIcon(props: SVGProps) {
+  const { size = 32, isFilled } = props;
+  return (
+    <Svg
+      width={size}
+      height={size}
+      fill="#fff"
+      viewBox="0 0 256 256"
+      {...props}
+    >
+      {!isFilled ? (
+        <Path d="M96 216a16 16 0 11-16-16 16 16 0 0116 16zm88-16a16 16 0 1016 16 16 16 0 00-16-16zm47.65-125.65l-28.53 92.71A23.89 23.89 0 01180.18 184H84.07A24.11 24.11 0 0161 166.59L24.82 40H8a8 8 0 010-16h16.82a16.08 16.08 0 0115.39 11.6L48.32 64H224a8 8 0 017.65 10.35zM213.17 80H52.89l23.49 82.2a8 8 0 007.69 5.8h96.11a8 8 0 007.65-5.65z" />
+      ) : (
+        <Path d="M96 216a16 16 0 11-16-16 16 16 0 0116 16zm88-16a16 16 0 1016 16 16 16 0 00-16-16zm46.44-132.75A8 8 0 00224 64H48.32l-8.11-28.4A16.08 16.08 0 0024.82 24H8a8 8 0 000 16h16.82L61 166.59A24.11 24.11 0 0084.07 184h96.11a23.89 23.89 0 0022.94-16.94l28.53-92.71a8 8 0 00-1.21-7.1z" />
+      )}
+    </Svg>
+  );
+}
+
+export function HomeIcon(props: SVGProps) {
+  const { size = 25, weight } = props;
+  return (
+    <Svg
+      width={size}
+      height={size}
+      fill="#048b9a"
+      viewBox="0 0 256 256"
+      {...props}
+    >
+      {weight == "light" ? (
+        <Path d="M217.47 105.24l-80-75.5-.09-.08a13.94 13.94 0 00-18.83 0l-.09.08-80 75.5A14 14 0 0034 115.55V208a14 14 0 0014 14h48a14 14 0 0014-14v-48a2 2 0 012-2h32a2 2 0 012 2v48a14 14 0 0014 14h48a14 14 0 0014-14v-92.45a14 14 0 00-4.53-10.31zM210 208a2 2 0 01-2 2h-48a2 2 0 01-2-2v-48a14 14 0 00-14-14h-32a14 14 0 00-14 14v48a2 2 0 01-2 2H48a2 2 0 01-2-2v-92.45a2 2 0 01.65-1.48l.09-.08 79.94-75.48a2 2 0 012.63 0L209.26 114l.08.08a2 2 0 01.66 1.48z" />
+      ) : (
+        <Path d="M218.83 103.77l-80-75.48a1.14 1.14 0 01-.11-.11 16 16 0 00-21.53 0l-.11.11-79.91 75.48A16 16 0 0032 115.55V208a16 16 0 0016 16h48a16 16 0 0016-16v-48h32v48a16 16 0 0016 16h48a16 16 0 0016-16v-92.45a16 16 0 00-5.17-11.78zM208 208h-48v-48a16 16 0 00-16-16h-32a16 16 0 00-16 16v48H48v-92.45l.11-.1L128 40l79.9 75.43.11.1z" />
+      )}
+    </Svg>
+  );
 }
 
 export function LinkIcon(props: SVGProps) {
@@ -392,7 +440,7 @@ export function PencilIcon(props: SVGProps) {
 }
 
 export function PlusIcon(props: SVGProps) {
-  const { size = 30, color = theme[400] } = props;
+  const { size = 30, color = theme[400], weight } = props;
   return (
     <Svg
       width={size}
@@ -401,7 +449,11 @@ export function PlusIcon(props: SVGProps) {
       viewBox="0 0 256 256"
       {...props}
     >
-      <Path d="M224 128a8 8 0 01-8 8h-80v80a8 8 0 01-16 0v-80H40a8 8 0 010-16h80V40a8 8 0 0116 0v80h80a8 8 0 018 8z" />
+      {weight == "bold" ? (
+        <Path d="M228 128a12 12 0 01-12 12h-76v76a12 12 0 01-24 0v-76H40a12 12 0 010-24h76V40a12 12 0 0124 0v76h76a12 12 0 0112 12z" />
+      ) : (
+        <Path d="M224 128a8 8 0 01-8 8h-80v80a8 8 0 01-16 0v-80H40a8 8 0 010-16h80V40a8 8 0 0116 0v80h80a8 8 0 018 8z" />
+      )}
     </Svg>
   );
 }

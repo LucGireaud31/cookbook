@@ -228,14 +228,14 @@ export function Home() {
             </Button>
           </View>
         )}
-        <IconButton
+        {/* <IconButton
           style={{
             ...styles.addButton,
             ...(pageMax < 2 && { bottom: 20, right: 20 }),
           }}
           icon={<PlusIcon color="white" />}
           onPress={onAddRecipe}
-        />
+        /> */}
         <FilterModal
           onSubmit={handleFilterModalSubmit}
           isOpen={isFilterOpen}
