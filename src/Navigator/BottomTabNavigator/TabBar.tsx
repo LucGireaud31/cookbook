@@ -10,6 +10,8 @@ import { background, theme } from "../../theme/colors";
 import { HomeIcon, PlusIcon, ShopIcon } from "../../components/icons/icons";
 import { ReactNode } from "react";
 import { useNavigation } from "../../hooks/useNavigation";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { showMaintenanceToast } from "../../utils/toast";
 
 const HOME_METRICS = {
   padding: 8,
@@ -23,6 +25,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       <View />
       <RouteIcon
         label="Courses"
+        isDisabled
         isSelected={state.index == 2}
         icon={<ShopIcon />}
         selectedIcon={<ShopIcon isFilled={true} />}
@@ -62,22 +65,33 @@ function RouteIcon({
   routeName,
   selectedIcon,
   isSelected,
+  isDisabled,
 }: {
   label: string;
   icon: ReactNode;
   selectedIcon: ReactNode;
   isSelected: boolean;
   routeName: string;
+  isDisabled?: boolean;
 }) {
   const { navigate } = useNavigation();
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigate(routeName);
+        if (isDisabled) {
+          showMaintenanceToast();
+        } else {
+          navigate(routeName);
+        }
       }}
     >
-      <View style={styles.routeIconContainer}>
+      <View
+        style={{
+          ...styles.routeIconContainer,
+          ...(isDisabled && { opacity: 0.5 }),
+        }}
+      >
         {isSelected ? selectedIcon : icon}
         <Text
           style={{
