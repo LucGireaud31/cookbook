@@ -69,15 +69,25 @@ export function RichSelect(props: RichSelectProps) {
 
   const [isCreatingIngredient, setIsCreatedIngredient] = useState(false);
 
-  const filteredIngredients =
-    (search.length > 0
-      ? ingredients?.filter(
-          (ing) =>
-            ing.id != selectedId &&
-            (!mappedIngredients.includes(ing.id) || ing.id == defaultId) &&
-            normalize(ing.name).includes(normalize(search))
-        )
-      : null) ?? [];
+  const filteredIngredients = useMemo(() => {
+    if (search.length == 0) return [];
+
+    return (
+      ingredients.filter((ing) => {
+        if (ing.id == selectedId) return false;
+        if (mappedIngredients.includes(ing.id) && ing.id != defaultId)
+          return false;
+
+        const ingNormalized = normalize(ing.name);
+        const searchNormalized = normalize(search);
+
+        return (
+          ingNormalized.includes(searchNormalized) ||
+          searchNormalized.includes(ingNormalized)
+        );
+      }) ?? []
+    );
+  }, [search, ingredients, selectedId, mappedIngredients, defaultId]);
 
   function handleIngredientPress(
     id: string,
