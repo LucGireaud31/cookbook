@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TouchableOpacity } from "react-native";
+import { BackButton } from ".";
 import { DrawerIcon } from "../components/icons/icons";
 import { ShoppingList } from "../components/ShopingList";
 import { background, theme } from "../theme/colors";
@@ -32,7 +33,11 @@ export function ShoppingListNavigator() {
       })}
     >
       <Stack.Screen name="shopList" component={ShoppingList} />
-      <Stack.Screen name="addFromRecipe" component={ShoppingList} />
+      <Stack.Screen
+        name="addFromRecipe"
+        component={ShoppingList}
+        options={{ headerLeft: BackButton }}
+      />
     </Stack.Navigator>
   );
 }

@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { IngredientQuantityType, TIngredient } from "../types/ingredients";
 
-const queryGetIngredients = gql`
+export const queryGetIngredients = gql`
   query ingredients {
     ingredients {
       id

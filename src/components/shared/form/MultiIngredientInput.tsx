@@ -139,7 +139,7 @@ export function MultiIngredientInput(props: MultiIngredientInputProps) {
   );
 }
 
-function Ingredient({
+export function Ingredient({
   name,
   image,
   onPress,

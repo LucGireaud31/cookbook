@@ -84,7 +84,10 @@ export const ModalAddIngredientToRecipe = forwardRef<
 
   async function handleSubmit(ing: TRecipeIngredient) {
     let values = ing;
-    if (ingredients?.filter((i) => i.id == values.id).length == 0) {
+    if (
+      !ing.isRecipe &&
+      ingredients?.filter((i) => i.id == values.id).length == 0
+    ) {
       // Need to create this new ingredient
       const imageName = lastValueOf(values.image.split("/"));
       if (!imageName) return;

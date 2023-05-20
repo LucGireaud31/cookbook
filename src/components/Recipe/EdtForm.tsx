@@ -3,13 +3,14 @@ import { useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
 import {
+  queryGetMiniRecipes,
   uploadRecipeImage,
+  useAllMiniRecipes,
   useCreateRecipe,
   useUpdateRecipe,
 } from "../../services/recipes";
 import { useTags } from "../../services/tags";
 import { useTypes } from "../../services/types";
-import { theme } from "../../theme/colors";
 import { TRecipeIngredient } from "../../types/ingredients";
 import { StackComponent } from "../../types/reactNavigation";
 import {
@@ -66,6 +67,7 @@ export function EditForm(props: EditFormProps) {
 
   const { data: types, query: queryGetTypes } = useTypes();
   const { data: tags, query: queryGetTags } = useTags();
+  const {} = useAllMiniRecipes();
 
   const modalRef = useRef<ModalAddIngredientToRecipeRef>(null);
 
@@ -185,7 +187,7 @@ export function EditForm(props: EditFormProps) {
     <Form form={form}>
       <Container
         keyboardShouldPersistTaps="always"
-        queryToRefetch={[queryGetTags, queryGetTypes]}
+        queryToRefetch={[queryGetTags, queryGetTypes, queryGetMiniRecipes]}
       >
         <Input
           label="Nom"
@@ -278,6 +280,7 @@ export function EditForm(props: EditFormProps) {
         mappedIngredients={[
           ...(form.getValues("ingredients")?.map((i) => i.id ?? "") ?? []),
           ...(form.getValues("recipes")?.map((r) => r.id ?? "") ?? []),
+          recipe?.id ?? "",
         ]}
       />
     </Form>

@@ -257,7 +257,7 @@ export function useCreateRecipe() {
     );
 
     client.refetchQueries({
-      include: [queryGetRecipes],
+      include: [queryGetRecipes, queryGetMiniRecipes],
     });
 
     return data?.createRecipe ?? null;
@@ -369,6 +369,7 @@ export function useUpdateRecipe() {
         return data?.updateRecipe ? { recipe: data.updateRecipe } : null;
       }
     );
+
     client.refetchQueries({
       include: [queryGetRecipes],
     });
@@ -437,7 +438,7 @@ export function useToggleRecipeNote() {
 // -----Mini----- //
 // -------------- //
 
-const queryGetMiniRecipes = gql`
+export const queryGetMiniRecipes = gql`
   query allRecipes {
     recipes(pagination: null, filter: null) {
       recipes {

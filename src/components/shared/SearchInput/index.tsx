@@ -6,7 +6,7 @@ import { InputFormProps } from "../Form";
 import { IconButton } from "../IconButton";
 
 interface SearchInputProps extends InputFormProps {
-  onFilter(): void;
+  onFilter?(): void;
   onSubmit(): void;
 }
 
@@ -17,7 +17,12 @@ export function SearchInput(props: SearchInputProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      <View
+        style={{
+          ...styles.searchContainer,
+          ...(!onFilter && { borderRadius: 50, width: "100%" }),
+        }}
+      >
         <TextInput
           style={styles.inputText}
           placeholder="Rechercher une recette..."
@@ -28,9 +33,11 @@ export function SearchInput(props: SearchInputProps) {
         />
         <IconButton icon={<GlassIcon />} onPress={onSubmit} />
       </View>
-      <TouchableOpacity style={styles.filterContainer} onPress={onFilter}>
-        <FilterIcon />
-      </TouchableOpacity>
+      {onFilter && (
+        <TouchableOpacity style={styles.filterContainer} onPress={onFilter}>
+          <FilterIcon />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

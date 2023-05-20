@@ -35,6 +35,8 @@ export function formatIngredientQuantityLabel(
       return valueStr + toPlural(" pincée", value);
     case IngredientQuantityType.Bag:
       return valueStr + toPlural(" sachet", value);
+    case IngredientQuantityType.Glass:
+      return valueStr + toPlural(" verre", value);
     default:
       return valueStr.toString();
   }
@@ -68,4 +70,5 @@ export const ingredientsUnitOptions = [
   { key: IngredientQuantityType.CAC.toString(), label: "Cuillère à café" },
   { key: IngredientQuantityType.CAS.toString(), label: "Cuillère à soupe" },
   { key: IngredientQuantityType.Bag.toString(), label: "Sachet" },
+  { key: IngredientQuantityType.Glass.toString(), label: "Verre" },
 ];
