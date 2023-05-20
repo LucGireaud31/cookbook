@@ -53,6 +53,19 @@ export function Drawer(props: DrawerProps) {
         source={require("../../../../assets/icon.png")}
       />
       <View style={styles.body}>
+        <Link
+          icon={
+            <Image
+              source={require("./tag.png")}
+              style={{ width: 25, height: 25 }}
+            />
+          }
+          onPress={() => navigate("tags")}
+        >
+          Tags
+        </Link>
+        <Divider style={{ marginVertical: 10 }} />
+
         <Link icon={<LinkIcon />} onPress={shareModalRef.current?.onOpen}>
           Associer mon compte
         </Link>

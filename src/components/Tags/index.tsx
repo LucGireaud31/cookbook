@@ -144,7 +144,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
   buttonAdd: {
-    marginVertical: 15,
+    marginTop: 15,
+    marginBottom: 25,
   },
   noData: {
     textAlign: "center",
