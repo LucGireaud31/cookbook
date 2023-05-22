@@ -141,7 +141,7 @@ export function RichSelect(props: RichSelectProps) {
     }
     return null;
   }, [search]);
-  console.log(defaultIngredient);
+
   const isError = error != null;
 
   return (

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Dimensions, StyleSheet, Text } from "react-native";
 import { TShoppingItem } from "../../types/shopping";
 import { IngredientButton } from "../shared/form/IngredientButton";
 import { MyFlatList } from "../shared/MyFlatList";
@@ -15,7 +15,7 @@ interface ShoppingListItemProps {
 export function ShoppingListItem(props: ShoppingListItemProps) {
   const {
     items,
-    noDataMessage = "Aucun élément",
+    noDataMessage = "La liste est vide",
     onAdd,
     onDelete,
     selected,
@@ -60,5 +60,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     fontSize: 15,
+    width: "100%",
+    height: "100%",
   },
 });

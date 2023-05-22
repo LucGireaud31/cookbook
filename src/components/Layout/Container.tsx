@@ -30,13 +30,14 @@ export function Container(props: ContainerProps) {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     (async () => {
-      client.refetchQueries({
-        include: Array.isArray(queryToRefetch)
-          ? queryToRefetch
-          : [queryToRefetch!],
-      });
-      onRefreshProps?.();
-
+      try {
+        await client.refetchQueries({
+          include: Array.isArray(queryToRefetch)
+            ? queryToRefetch
+            : [queryToRefetch!],
+        });
+        onRefreshProps?.();
+      } catch {}
       setRefreshing(false);
     })();
   }, [queryToRefetch]);

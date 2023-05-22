@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { StyleSheet, Text, Image } from "react-native";
 import { Modal } from "../../shared/Modal";
 
 export interface HelpModalRef {

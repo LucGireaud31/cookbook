@@ -1,9 +1,14 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
-import { useShoppingItems } from "../../services/shopping";
+import {
+  useAddShoppingItems,
+  useMyShoppingList,
+  useRemoveShoppingItem,
+  useShoppingItems,
+} from "../../services/shopping";
 import { TShoppingItem } from "../../types/shopping";
+import { formatImageUrlForDatabase } from "../../utils/shopping";
 import { normalize } from "../../utils/string";
 import { Container } from "../Layout/Container";
 import { Form } from "../shared/Form";
@@ -13,9 +18,11 @@ import { ShoppingListItem } from "./ShoppingListItems";
 export function ShoppingList() {
   const { navigate } = useNavigation();
 
-  const { data, query } = useShoppingItems();
+  const { data: allItems, query: queryAllItems } = useShoppingItems();
 
-  const [list, setList] = useState<TShoppingItem[]>([]);
+  const { data: myList, query: queryMyList } = useMyShoppingList();
+  const addToMyList = useAddShoppingItems();
+  const removeToMyList = useRemoveShoppingItem();
 
   const form = useForm<{ search: string }>({ defaultValues: { search: "" } });
 
@@ -24,7 +31,7 @@ export function ShoppingList() {
   const items =
     search.length < 2
       ? []
-      : data?.filter((i) => {
+      : allItems?.filter((i) => {
           const itemNormalized = normalize(i.name);
           return (
             itemNormalized.includes(searchNormalized) ||
@@ -33,7 +40,12 @@ export function ShoppingList() {
         }) ?? [];
 
   function onDeleteItem(item: TShoppingItem) {
-    setList(list.filter((l) => l.id != item.id));
+    removeToMyList(item.id);
+  }
+
+  function onAddItem(item: TShoppingItem) {
+    form.setValue("search", "");
+    addToMyList(formatImageUrlForDatabase([item]));
   }
 
   return (
@@ -47,23 +59,20 @@ export function ShoppingList() {
         <Container
           style={styles.scrollContainer}
           keyboardShouldPersistTaps="always"
-          queryToRefetch={query}
+          queryToRefetch={[queryAllItems, queryMyList]}
         >
           {search.length < 2 ? (
             <ShoppingListItem
-              items={list}
-              selected={list}
+              items={myList}
+              selected={myList}
               onDelete={onDeleteItem}
             />
           ) : (
             <ShoppingListItem
               items={items}
-              onAdd={(i) => {
-                setList([...list, i]);
-                form.setValue("search", "");
-              }}
+              onAdd={onAddItem}
               onDelete={onDeleteItem}
-              selected={list}
+              selected={myList}
             />
           )}
         </Container>
@@ -79,5 +88,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingTop: 10,
     marginBottom: 30,
+    width: "100%",
+    minHeight: "90%",
   },
 });
