@@ -8,10 +8,11 @@ import { IconButton } from "../IconButton";
 interface SearchInputProps extends InputFormProps {
   onFilter?(): void;
   onSubmit(): void;
+  placeholder?: string;
 }
 
 export function SearchInput(props: SearchInputProps) {
-  const { onFilter, onSubmit, name = "" } = props;
+  const { onFilter, onSubmit, name = "", placeholder } = props;
 
   const { field } = useController({ name });
 
@@ -25,7 +26,7 @@ export function SearchInput(props: SearchInputProps) {
       >
         <TextInput
           style={styles.inputText}
-          placeholder="Rechercher une recette..."
+          placeholder={placeholder ?? "Rechercher une recette..."}
           placeholderTextColor={gray[300]}
           value={field.value}
           onChangeText={field.onChange}

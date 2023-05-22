@@ -2,7 +2,7 @@ import { useTypes } from "../../services/types";
 import { SearchInput } from "../shared/SearchInput";
 import { TypeButton } from "./TypeButton";
 import { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Text, FlatList } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Container } from "../Layout/Container";
 import { FilterProps, useRecipesPagination } from "../../services/recipes";
 import { TRecipeItem } from "../../types/recipe";
@@ -26,6 +26,7 @@ import { getCurrentProjectVersion } from "../../utils/project";
 import { getHistory } from "../../services/history";
 import { HistoryModal, HistoryModalRef } from "../History";
 import { LoadingPage } from "../shared/LoadingPage";
+import { MyFlatList } from "../shared/MyFlatList";
 
 const LIST_SIZE = 1000;
 
@@ -185,13 +186,13 @@ export function Home() {
           {recipes?.length == 0 && (
             <Text style={styles.noData}>Aucune recette</Text>
           )}
-          <FlatList
-            data={recipes}
-            numColumns={3}
-            style={{ paddingBottom: 20 }}
-            renderItem={(item) => (
-              <Recipe key={item.item.id} recipe={item.item} />
-            )}
+
+          <MyFlatList
+            data={recipes ?? []}
+            colNumber={3}
+            rowGap={15}
+            colGap={0}
+            item={(item) => <Recipe key={item.id} recipe={item} />}
           />
         </Container>
         <FilterModal

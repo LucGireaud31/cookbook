@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
   container: {
     width: recipeWidth,
     alignItems: "center",
-    marginVertical: 15,
   },
 
   labelContainer: {

@@ -127,23 +127,21 @@ export function RichSelect(props: RichSelectProps) {
     }
   }
 
-  const defaultIngredient = useMemo(
-    () =>
-      search.length > 1
-        ? {
-            id: generateShortUID() + generateShortUID(),
-            name: capitalize(search).trim(),
-            image: `${ENV.API.UPLOADURL}/ingredients/${normalize(
-              search[0]
-            )}.png`,
-            unities: [0, 1, 2, 3, 4, 5, 6, 7],
-            isRecipe: false,
-            plural: capitalize(search).trim(),
-          }
-        : null,
-    [search]
-  );
-
+  const defaultIngredient = useMemo(() => {
+    const noramalizedSearch = normalize(search.replace(/[0-9]/g, "").trim());
+    if (noramalizedSearch.length > 1) {
+      return {
+        id: generateShortUID() + generateShortUID(),
+        name: capitalize(search).trim(),
+        image: `${ENV.API.UPLOADURL}/ingredients/${noramalizedSearch[0]}.png`,
+        unities: [0, 1, 2, 3, 4, 5, 6, 7],
+        isRecipe: false,
+        plural: capitalize(search).trim(),
+      };
+    }
+    return null;
+  }, [search]);
+  console.log(defaultIngredient);
   const isError = error != null;
 
   return (
@@ -219,20 +217,21 @@ export function RichSelect(props: RichSelectProps) {
           {search.length > 1 &&
             !isCreatingIngredient &&
             ingredients.filter((i) => normalize(i.name) == normalize(search))
-              .length == 0 && (
+              .length == 0 &&
+            defaultIngredient && (
               <IngredientButton
-                image={defaultIngredient!.image}
-                isRecipe={defaultIngredient!.isRecipe}
+                image={defaultIngredient.image}
+                isRecipe={defaultIngredient.isRecipe}
                 isSelected={false}
-                name={defaultIngredient!.name}
+                name={defaultIngredient.name}
                 onPress={() =>
                   handleIngredientPress(
-                    defaultIngredient!.id,
-                    defaultIngredient!.name,
-                    defaultIngredient!.image,
-                    defaultIngredient!.unities,
-                    defaultIngredient!.isRecipe,
-                    defaultIngredient!.plural
+                    defaultIngredient.id,
+                    defaultIngredient.name,
+                    defaultIngredient.image,
+                    defaultIngredient.unities,
+                    defaultIngredient.isRecipe,
+                    defaultIngredient.plural
                   )
                 }
               />

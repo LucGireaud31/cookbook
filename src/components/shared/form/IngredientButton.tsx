@@ -9,6 +9,7 @@ interface IngredientButtonProps {
   isSelected: boolean;
   isRecipe?: boolean;
   backgroundColor?: string;
+  style?: any;
 }
 
 export function IngredientButton({
@@ -18,6 +19,7 @@ export function IngredientButton({
   isRecipe,
   isSelected,
   backgroundColor,
+  style,
 }: IngredientButtonProps) {
   return (
     <TouchableOpacity
@@ -29,6 +31,7 @@ export function IngredientButton({
       <View
         style={[
           styles.ingredient,
+          style,
           isSelected
             ? {
                 backgroundColor: !isRecipe ? theme[400] : undefined,
@@ -86,8 +89,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 1,
   },
   ingredientIcon: {
-    width: 50,
-    height: 50,
+    width: "50%",
+    height: "50%",
     resizeMode: "contain",
   },
   ingredientLabel: {

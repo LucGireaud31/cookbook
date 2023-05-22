@@ -27,7 +27,7 @@ export function ShoppingListNavigator() {
             <DrawerIcon size={30} />
           </TouchableOpacity>
         ),
-        title: "Ma liste de courses",
+        title: "Liste de courses",
         headerTitleAlign: "center",
         headerTintColor: theme[400],
       })}

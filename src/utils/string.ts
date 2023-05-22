@@ -22,7 +22,8 @@ export function normalize(value: string) {
     .replaceAll("ô", "o")
     .replaceAll("ù", "u")
     .replaceAll("â", "a")
-    .replaceAll("î", "i");
+    .replaceAll("î", "i")
+    .replaceAll("ï", "i");
 }
 
 export function noramalizedCompare(s1: string, s2: string) {

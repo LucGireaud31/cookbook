@@ -24,7 +24,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       <View />
       <RouteIcon
         label="Courses"
-        isDisabled
+        // isDisabled
         isSelected={state.index == 2}
         icon={<ShopIcon />}
         selectedIcon={<ShopIcon isFilled={true} />}
