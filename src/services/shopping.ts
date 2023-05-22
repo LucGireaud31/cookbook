@@ -86,7 +86,14 @@ export function useAddShoppingItems() {
     const { data } = await mutation({ variables: { items } });
 
     const myNewList = data?.addToShoppingList;
-    if (myNewList) {
+    if (
+      myNewList &&
+      (!potentialItems ||
+        JSON.stringify(myNewList?.map((i) => i.name)) !=
+          JSON.stringify(
+            (potentialItems as TShoppingItem[]).map((i) => i.name)
+          ))
+    ) {
       client.cache.updateQuery(
         {
           query: queryGetShoppingList,
@@ -146,7 +153,14 @@ export function useRemoveShoppingItem() {
 
     const myNewList = data?.removeToShoppingList;
 
-    if (myNewList) {
+    if (
+      myNewList &&
+      (!potentialItems ||
+        JSON.stringify(myNewList?.map((i) => i.name)) !=
+          JSON.stringify(
+            (potentialItems as TShoppingItem[]).map((i) => i.name)
+          ))
+    ) {
       client.cache.updateQuery(
         {
           query: queryGetShoppingList,

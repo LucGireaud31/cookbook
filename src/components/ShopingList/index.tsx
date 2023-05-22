@@ -12,6 +12,7 @@ import { formatImageUrlForDatabase } from "../../utils/shopping";
 import { normalize } from "../../utils/string";
 import { Container } from "../Layout/Container";
 import { Form } from "../shared/Form";
+import { LoadingPage } from "../shared/LoadingPage";
 import { SearchInput } from "../shared/SearchInput";
 import { ShoppingListItem } from "./ShoppingListItems";
 
@@ -20,7 +21,7 @@ export function ShoppingList() {
 
   const { data: allItems, query: queryAllItems } = useShoppingItems();
 
-  const { data: myList, query: queryMyList } = useMyShoppingList();
+  const { data: myList, loading, query: queryMyList } = useMyShoppingList();
   const addToMyList = useAddShoppingItems();
   const removeToMyList = useRemoveShoppingItem();
 
@@ -46,6 +47,10 @@ export function ShoppingList() {
   function onAddItem(item: TShoppingItem) {
     form.setValue("search", "");
     addToMyList(formatImageUrlForDatabase([item]));
+  }
+
+  if (loading) {
+    return <LoadingPage label="Chargement de la liste" />;
   }
 
   return (

@@ -97,7 +97,7 @@ export function ShareMyBook(props: ShareMyBookProps) {
           )}
           {display && (
             <>
-              <Text>Code d'invitation d'un autre utilisateur</Text>
+              <Text>Code d'invitation de l'utilisateur</Text>
               <DumpbTextInput
                 label="Code d'invitation"
                 onSubmitEditing={onSubmit}
@@ -116,7 +116,7 @@ export function ShareMyBook(props: ShareMyBookProps) {
                 style={styles.helpLink}
                 onPress={helpModalRef.current?.onOpen}
               >
-                Comment trouver son code ?
+                Comment peut-il trouver son code d'invitation ?
               </Text>
 
               <Button onPress={onSubmit} style={{ marginTop: 20 }}>

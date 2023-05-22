@@ -23,12 +23,12 @@ export const HelpModal = forwardRef<HelpModalRef, HelpModalProps>(
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Comment trouver son code ?"
+        title="Comment associer son compte ?"
       >
-        <Image source={require("./screen.jpeg")} style={styles.image} />
+        <Image source={require("./screen.jpg")} style={styles.image} />
         <Text style={styles.subtitle}>
           Sur la page principal de l'utilisateur, cliquer sur le menu en haut à
-          gauche puis sur 'Partager mes recettes'
+          gauche puis sur 'Associer mon compte'
         </Text>
       </Modal>
     );
