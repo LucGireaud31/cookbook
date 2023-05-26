@@ -451,7 +451,11 @@ export function useAllMiniRecipes() {
     queryGetMiniRecipes
   );
 
-  return { ...rest, data: data?.recipes.recipes ?? null };
+  return {
+    ...rest,
+    query: queryGetMiniRecipes,
+    data: data?.recipes.recipes ?? null,
+  };
 }
 
 // ----------------- //

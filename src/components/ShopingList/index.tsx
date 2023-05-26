@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
@@ -9,20 +10,23 @@ import {
   useShoppingItems,
 } from "../../services/shopping";
 import { TShoppingItem, TShoppingItemBody } from "../../types/shopping";
-import { lastValueOf, lastValuesOf } from "../../utils/list";
+import { lastValuesOf } from "../../utils/list";
 import {
   formatImageUrlForDatabase,
   getProposalsByName,
 } from "../../utils/shopping";
 import { normalize } from "../../utils/string";
+import { CaretIcon } from "../icons/icons";
 import { Container } from "../Layout/Container";
+import { Button } from "../shared/Button";
 import { Form } from "../shared/Form";
 import { LoadingPage } from "../shared/LoadingPage";
 import { SearchInput } from "../shared/SearchInput";
 import { ShoppingListItem } from "./ShoppingListItems";
+import { ShoppingMenuHeader } from "./ShoppingMenuHeader";
 
 export function ShoppingList() {
-  const { navigate } = useNavigation();
+  const navigation = useNavigation();
 
   const { data: allItems, query: queryAllItems } = useShoppingItems();
 
@@ -66,6 +70,12 @@ export function ShoppingList() {
     );
   }
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <ShoppingMenuHeader />,
+    });
+  }, []);
+
   if (loading) {
     return <LoadingPage label="Chargement de la liste" />;
   }
@@ -108,13 +118,16 @@ export function ShoppingList() {
 }
 
 const styles = StyleSheet.create({
-  container: { alignItems: "center", paddingTop: 10, paddingHorizontal: 15 },
+  container: {
+    alignItems: "center",
+    paddingTop: 10,
+    paddingHorizontal: 15,
+    height: "100%",
+  },
   scrollContainer: {
     marginTop: 0,
     paddingHorizontal: 0,
     paddingTop: 10,
-    marginBottom: 30,
     width: "100%",
-    minHeight: "90%",
   },
 });

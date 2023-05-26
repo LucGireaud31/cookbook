@@ -44,7 +44,7 @@ export function RecipeAction(props: RecipeActionProps) {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <Menu
         contentStyle={{
           backgroundColor: "white",
@@ -93,7 +93,7 @@ export function RecipeAction(props: RecipeActionProps) {
       <DeletionModal ref={deletionModalRef} onDelete={handleDeleteRecipe} />
       <ShareRecipeModal ref={shareRecipeRef} />
       <DisplayRecipePdfLoaderModal ref={pdfLoaderRef} />
-    </View>
+    </>
   );
 }
 

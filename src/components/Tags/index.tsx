@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
   buttonAdd: {
     marginTop: 15,
     marginBottom: 25,
+    height: 50,
   },
   noData: {
     textAlign: "center",

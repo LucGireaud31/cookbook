@@ -48,7 +48,7 @@ export type TRecipe = {
 export type TMiniRecipe = {
   id: string;
   name: string;
-  image: string;
+  image?: string;
   quantity?: TRecipeQuantity;
 };
 

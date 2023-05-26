@@ -3,6 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { BackButton } from ".";
 import { DrawerIcon } from "../components/icons/icons";
 import { ShoppingList } from "../components/ShopingList";
+import { ShoppingWithRecipes } from "../components/ShopingList/ShoppingWithRecipes";
 import { background, theme } from "../theme/colors";
 
 export function ShoppingListNavigator() {
@@ -35,7 +36,7 @@ export function ShoppingListNavigator() {
       <Stack.Screen name="shopList" component={ShoppingList} />
       <Stack.Screen
         name="addFromRecipe"
-        component={ShoppingList}
+        component={ShoppingWithRecipes}
         options={{ headerLeft: BackButton }}
       />
     </Stack.Navigator>

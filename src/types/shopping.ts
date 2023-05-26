@@ -10,3 +10,7 @@ export type TShoppingItemBody = {
   image: string;
   quantity?: number;
 };
+
+export type TShopingRecipeToAdd = {
+  id: string;
+};

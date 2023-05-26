@@ -290,7 +290,7 @@ export function EditForm(props: EditFormProps) {
 const styles = StyleSheet.create({
   button: {
     marginBottom: 30,
-    marginTop: 10,
     marginHorizontal: 15,
+    height: 50,
   },
 });

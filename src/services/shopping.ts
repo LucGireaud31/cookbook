@@ -1,7 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { join } from "lodash";
 import { ENV } from "../../env";
-import { TShoppingItem, TShoppingItemBody } from "../types/shopping";
+import {
+  TShopingRecipeToAdd,
+  TShoppingItem,
+  TShoppingItemBody,
+} from "../types/shopping";
 import { generateShortUID } from "../utils/crypto";
 import { removeFieldInObject } from "../utils/object";
 
@@ -313,5 +317,52 @@ export function useCreateShoppingItem() {
     return data?.createShoppingItem;
   }
 
+  return mutate;
+}
+
+// --------------------------------------- //
+// --Add ingredient's recipes to shopping-- //
+// --------------------------------------- //
+
+const mutationAddIngredientsRecipesInShopping = gql`
+  mutation addIngredientsRecipesInShopping(
+    $recipes: [RecipesInShoppingBody!]!
+  ) {
+    addIngredientsRecipesInShopping(recipes: $recipes) {
+      id
+      image
+      name
+      quantity
+    }
+  }
+`;
+
+export function useAddIngredientsRecipesInShopping() {
+  const [mutation, { client }] = useMutation<{
+    addIngredientsRecipesInShopping: TShoppingItem[];
+  }>(mutationAddIngredientsRecipesInShopping);
+
+  async function mutate(recipes: TShopingRecipeToAdd[]) {
+    const { data: newItems } = await mutation({ variables: { recipes } });
+
+    if (newItems) {
+      client.cache.updateQuery(
+        {
+          query: queryGetShoppingList,
+        },
+        (
+          currentList: { shoppingList: TShoppingItem[] } | null
+        ): { shoppingList: TShoppingItem[] } | null => {
+          if (currentList?.shoppingList) {
+            return { shoppingList: newItems.addIngredientsRecipesInShopping };
+          }
+
+          return currentList;
+        }
+      );
+    }
+
+    return newItems?.addIngredientsRecipesInShopping;
+  }
   return mutate;
 }
