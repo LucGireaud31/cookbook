@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { Dimensions, StyleSheet, Text } from "react-native";
-import { TShoppingItem } from "../../types/shopping";
+import { StyleSheet, Text } from "react-native";
+import { TShoppingItem, TShoppingItemBody } from "../../types/shopping";
 import { IngredientButton } from "../shared/form/IngredientButton";
 import { MyFlatList } from "../shared/MyFlatList";
 
@@ -10,6 +10,8 @@ interface ShoppingListItemProps {
   onAdd?(item: TShoppingItem): void;
   onDelete?(item: TShoppingItem): void;
   selected?: TShoppingItem[];
+  proposals?: TShoppingItem[];
+  onCreateProposal?(item: TShoppingItemBody): void;
 }
 
 export function ShoppingListItem(props: ShoppingListItemProps) {
@@ -19,6 +21,8 @@ export function ShoppingListItem(props: ShoppingListItemProps) {
     onAdd,
     onDelete,
     selected,
+    proposals = [],
+    onCreateProposal,
   } = props;
 
   const isSelected = useCallback(
@@ -28,22 +32,31 @@ export function ShoppingListItem(props: ShoppingListItemProps) {
     [selected]
   );
 
-  if (items.length == 0)
+  if (items.length + proposals.length == 0)
     return <Text style={styles.noData}>{noDataMessage}</Text>;
 
   return (
     <MyFlatList
-      data={items}
+      data={[...items, ...proposals]}
       colNumber={3}
       rowGap={10}
       colGap={10}
       item={(item, itemWidth) => (
         <IngredientButton
-          key={item.id}
           name={item.name}
           image={item.image}
           isSelected={isSelected(item)}
-          onPress={() => (isSelected(item) ? onDelete?.(item) : onAdd?.(item))}
+          onPress={() =>
+            isSelected(item)
+              ? onDelete?.(item)
+              : item.id
+              ? onAdd?.(item)
+              : onCreateProposal?.({
+                  name: item.name,
+                  image: item.image,
+                  quantity: item.quantity,
+                })
+          }
           style={{
             marginHorizontal: 0,
             width: itemWidth,

@@ -46,8 +46,7 @@ export function Idea(props: IdeaProps) {
           </Text>
         </View>
         <Text style={[styles.h2, { marginTop: 30 }]}>
-          N'hésitez pas à faire un retour, le développeur de l'application
-          accepte même les critiques 😉
+          Tout retour est le bienvenu 😉.
         </Text>
         <DumpbTextInput
           numberOfLines={10}

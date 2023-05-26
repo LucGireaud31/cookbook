@@ -4,3 +4,10 @@ export function lastValueOf<T>(list?: T[]) {
   }
   return null;
 }
+
+export function lastValuesOf<T>(list: T[], count: number) {
+  if (count && list.length >= count)
+    return list.slice(Math.max(list.length - count, 1));
+
+  return list;
+}

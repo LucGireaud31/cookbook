@@ -9,6 +9,7 @@ import { theme } from "../../../theme/colors";
 import { TRecipeIngredient } from "../../../types/ingredients";
 import { RecipeQuantityTypeEnum } from "../../../types/recipe";
 import { generateShortUID } from "../../../utils/crypto";
+import { getLetterImage } from "../../../utils/ingredient";
 import { normalize } from "../../../utils/string";
 import { GlassIcon } from "../../icons/icons";
 import { InputFormProps, useFieldError } from "../Form";
@@ -133,7 +134,7 @@ export function RichSelect(props: RichSelectProps) {
       return {
         id: generateShortUID() + generateShortUID(),
         name: capitalize(search).trim(),
-        image: `${ENV.API.UPLOADURL}/ingredients/${noramalizedSearch[0]}.png`,
+        image: getLetterImage(noramalizedSearch[0]),
         unities: [0, 1, 2, 3, 4, 5, 6, 7],
         isRecipe: false,
         plural: capitalize(search).trim(),

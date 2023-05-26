@@ -1,6 +1,8 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { join } from "lodash";
 import { ENV } from "../../env";
-import { TShoppingItem } from "../types/shopping";
+import { TShoppingItem, TShoppingItemBody } from "../types/shopping";
+import { generateShortUID } from "../utils/crypto";
 import { removeFieldInObject } from "../utils/object";
 
 // ---------------------- //
@@ -200,4 +202,116 @@ export function useMyShoppingList() {
     query: queryGetShoppingList,
     ...rest,
   };
+}
+
+// ------------------------- //
+// --Create Shopping items-- //
+// ------------------------- //
+
+const mutationCreateShoppingItem = gql`
+  mutation createShoppingItem(
+    $item: ShoppingItemCreateBody!
+    $addToList: Boolean
+  ) {
+    createShoppingItem(item: $item, addToList: $addToList) {
+      id
+      image
+      name
+      quantity
+    }
+  }
+`;
+
+export function useCreateShoppingItem() {
+  const [mutation, { client }] = useMutation<{
+    createShoppingItem: TShoppingItem;
+  }>(mutationCreateShoppingItem);
+
+  async function mutate(item: TShoppingItemBody, addToList: boolean = true) {
+    let potentialItem: TShoppingItem | null = null;
+
+    client.cache.updateQuery(
+      {
+        query: queryGetShoppingList,
+      },
+      (
+        currentList: { shoppingList: TShoppingItem[] } | null
+      ): { shoppingList: TShoppingItem[] } | null => {
+        if (currentList) {
+          potentialItem = {
+            ...item,
+            id: generateShortUID(),
+            quantity: item.quantity ?? 1,
+            image: ENV.API.UPLOADURL + "/" + item.image,
+          };
+
+          return {
+            shoppingList: [...currentList.shoppingList, potentialItem].sort(
+              (a, b) => a.name.localeCompare(b.name)
+            ),
+          };
+        }
+        return currentList;
+      }
+    );
+
+    const { data } = await mutation({ variables: { item, addToList } });
+
+    const realNewItem = data?.createShoppingItem;
+
+    client.cache.updateQuery(
+      {
+        query: queryGetShoppingList,
+      },
+      (
+        currentList: { shoppingList: TShoppingItem[] } | null
+      ): { shoppingList: TShoppingItem[] } | null => {
+        if (currentList) {
+          return {
+            shoppingList: currentList.shoppingList
+              .map((i) => {
+                if (i.id == potentialItem?.id) {
+                  if (realNewItem) {
+                    if (realNewItem.image != potentialItem.image) {
+                      return realNewItem;
+                    }
+                    return {
+                      ...potentialItem,
+                      id: realNewItem.id,
+                    };
+                  }
+                  return undefined;
+                }
+                return i;
+              })
+              .filter(Boolean) as TShoppingItem[],
+          };
+        }
+        return currentList;
+      }
+    );
+
+    client.cache.updateQuery(
+      {
+        query: queryGetShoppingItems,
+      },
+      (
+        currentList: { shoppingItems: TShoppingItem[] } | null
+      ): { shoppingItems: TShoppingItem[] } | null => {
+        if (currentList && realNewItem) {
+          return {
+            shoppingItems: [...currentList.shoppingItems, realNewItem].sort(
+              (a, b) => a.name.localeCompare(b.name)
+            ),
+          };
+        }
+
+        return currentList;
+      }
+    );
+
+    return data?.createShoppingItem;
+  }
+
+  return mutate;
 }

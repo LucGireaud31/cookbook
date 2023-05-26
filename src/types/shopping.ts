@@ -4,3 +4,9 @@ export type TShoppingItem = {
   image: string;
   quantity?: number;
 };
+
+export type TShoppingItemBody = {
+  name: string;
+  image: string;
+  quantity?: number;
+};

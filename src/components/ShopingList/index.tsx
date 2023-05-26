@@ -3,12 +3,17 @@ import { View, StyleSheet } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
 import {
   useAddShoppingItems,
+  useCreateShoppingItem,
   useMyShoppingList,
   useRemoveShoppingItem,
   useShoppingItems,
 } from "../../services/shopping";
-import { TShoppingItem } from "../../types/shopping";
-import { formatImageUrlForDatabase } from "../../utils/shopping";
+import { TShoppingItem, TShoppingItemBody } from "../../types/shopping";
+import { lastValueOf, lastValuesOf } from "../../utils/list";
+import {
+  formatImageUrlForDatabase,
+  getProposalsByName,
+} from "../../utils/shopping";
 import { normalize } from "../../utils/string";
 import { Container } from "../Layout/Container";
 import { Form } from "../shared/Form";
@@ -22,23 +27,26 @@ export function ShoppingList() {
   const { data: allItems, query: queryAllItems } = useShoppingItems();
 
   const { data: myList, loading, query: queryMyList } = useMyShoppingList();
+
   const addToMyList = useAddShoppingItems();
   const removeToMyList = useRemoveShoppingItem();
+  const createItem = useCreateShoppingItem();
 
   const form = useForm<{ search: string }>({ defaultValues: { search: "" } });
 
   const search = form.watch("search");
+  const isSearching = search.length >= 2;
+
   const searchNormalized = normalize(search);
-  const items =
-    search.length < 2
-      ? []
-      : allItems?.filter((i) => {
-          const itemNormalized = normalize(i.name);
-          return (
-            itemNormalized.includes(searchNormalized) ||
-            searchNormalized.includes(itemNormalized)
-          );
-        }) ?? [];
+  const items = !isSearching
+    ? []
+    : allItems?.filter((i) => {
+        const itemNormalized = normalize(i.name);
+        return (
+          itemNormalized.includes(searchNormalized) ||
+          searchNormalized.includes(itemNormalized)
+        );
+      }) ?? [];
 
   function onDeleteItem(item: TShoppingItem) {
     removeToMyList(item.id);
@@ -47,6 +55,15 @@ export function ShoppingList() {
   function onAddItem(item: TShoppingItem) {
     form.setValue("search", "");
     addToMyList(formatImageUrlForDatabase([item]));
+  }
+
+  function onCreateItem(item: TShoppingItemBody) {
+    form.setValue("search", "");
+
+    createItem(
+      { ...item, image: lastValuesOf(item.image.split("/"), 2).join("/") },
+      true
+    );
   }
 
   if (loading) {
@@ -66,7 +83,7 @@ export function ShoppingList() {
           keyboardShouldPersistTaps="always"
           queryToRefetch={[queryAllItems, queryMyList]}
         >
-          {search.length < 2 ? (
+          {!isSearching ? (
             <ShoppingListItem
               items={myList}
               selected={myList}
@@ -78,6 +95,10 @@ export function ShoppingList() {
               onAdd={onAddItem}
               onDelete={onDeleteItem}
               selected={myList}
+              proposals={
+                isSearching ? getProposalsByName(search, items) : undefined
+              }
+              onCreateProposal={onCreateItem}
             />
           )}
         </Container>
