@@ -19,7 +19,7 @@ export function ShoppingWithRecipes(props: ShoppingWithRecipesProps) {
   const { goBack } = useNavigation();
 
   const form = useForm<{ search: string }>({ defaultValues: { search: "" } });
-  const { data, query } = useAllMiniRecipes();
+  const { data, query } = useAllMiniRecipes({ haveIngredients: true });
 
   const addRecipesIngredientsToList = useAddIngredientsRecipesInShopping();
 

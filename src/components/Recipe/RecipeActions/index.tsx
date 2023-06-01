@@ -46,9 +46,6 @@ export function RecipeAction(props: RecipeActionProps) {
   return (
     <>
       <Menu
-        contentStyle={{
-          backgroundColor: "white",
-        }}
         visible={visible}
         onDismiss={closeMenu}
         anchor={

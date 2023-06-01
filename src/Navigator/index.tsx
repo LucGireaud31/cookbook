@@ -24,6 +24,7 @@ import { ResetPassword } from "../components/Login/ResetPassword";
 import { StatusBar } from "expo-status-bar";
 import { ShareMyBook } from "../components/Login/CreateAccount/ShareMyBook";
 import { BottomTabContainer } from "./BottomTabNavigator";
+import { mutationAddConnexionEvent } from "../services/trace";
 
 export const tokenAtom = atom<string | null>(null);
 
@@ -40,6 +41,7 @@ export function Navigator() {
   const [token, setToken] = useAtom(tokenAtom);
   const [authentified, setAuthentified] = useState(false);
   const setApolloHeader = useSetApolloHeader();
+  const addConnexionEvent = mutationAddConnexionEvent();
 
   const { navigate } = useNavigation();
 
@@ -64,6 +66,7 @@ export function Navigator() {
   useEffect(() => {
     if (token) {
       setApolloHeader(token);
+      addConnexionEvent();
     }
     setAuthentified(token != null);
   }, [token]);

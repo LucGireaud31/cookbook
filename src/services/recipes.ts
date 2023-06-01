@@ -51,12 +51,18 @@ export interface FilterProps {
   minNote?: number;
   isFavorite?: boolean;
   search?: string;
+  haveIngredients?: boolean;
 }
 
 export function useRecipesPagination() {
-  const { data, ...rest } = useQuery<TUserRecipes>(queryGetRecipes);
+  try {
+    const { data, ...rest } = useQuery<TUserRecipes>(queryGetRecipes);
 
-  return { data: data?.recipes, query: queryGetRecipes, ...rest };
+    return { data: data?.recipes, query: queryGetRecipes, ...rest };
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 // -------------------- //
@@ -432,8 +438,8 @@ export function useToggleRecipeNote() {
 // -------------- //
 
 export const queryGetMiniRecipes = gql`
-  query allRecipes {
-    recipes(pagination: null, filter: null) {
+  query allRecipes($filter: RecipeFilterBody) {
+    recipes(pagination: null, filter: $filter) {
       recipes {
         id
         name
@@ -446,9 +452,10 @@ export const queryGetMiniRecipes = gql`
     }
   }
 `;
-export function useAllMiniRecipes() {
+export function useAllMiniRecipes(filter?: FilterProps) {
   const { data, ...rest } = useQuery<{ recipes: { recipes: TMiniRecipe[] } }>(
-    queryGetMiniRecipes
+    queryGetMiniRecipes,
+    { variables: { filter } }
   );
 
   return {

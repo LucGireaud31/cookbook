@@ -19,9 +19,6 @@ export function ShoppingMenuHeader(props: ShoppingMenuHeaderProps) {
 
   return (
     <Menu
-      contentStyle={{
-        backgroundColor: "white",
-      }}
       onDismiss={closeMenu}
       visible={visible}
       anchor={
