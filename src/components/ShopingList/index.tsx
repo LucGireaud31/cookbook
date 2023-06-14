@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
+import { useAllMiniRecipes } from "../../services/recipes";
 import {
+  useAddIngredientsRecipesInShopping,
   useAddShoppingItems,
   useCreateShoppingItem,
   useMyShoppingList,
@@ -29,12 +31,16 @@ export function ShoppingList() {
   const navigation = useNavigation();
 
   const { data: allItems, query: queryAllItems } = useShoppingItems();
+  const { data: miniRecipes, query: queryMiniRecipes } = useAllMiniRecipes({
+    haveIngredients: true,
+  });
 
   const { data: myList, loading, query: queryMyList } = useMyShoppingList();
 
   const addToMyList = useAddShoppingItems();
   const removeToMyList = useRemoveShoppingItem();
   const createItem = useCreateShoppingItem();
+  const addRecipesIngredientsToList = useAddIngredientsRecipesInShopping();
 
   const form = useForm<{ search: string }>({ defaultValues: { search: "" } });
 
@@ -52,6 +58,23 @@ export function ShoppingList() {
         );
       }) ?? [];
 
+  const itemsRecipe = !isSearching
+    ? []
+    : miniRecipes
+        ?.map<TShoppingItem>((r) => ({
+          id: r.id,
+          name: r.name,
+          image: r.image as string,
+          isRecipe: true,
+        }))
+        .filter((i) => {
+          const itemNormalized = normalize(i.name);
+          return (
+            itemNormalized.includes(searchNormalized) ||
+            searchNormalized.includes(itemNormalized)
+          );
+        }) ?? [];
+
   function onDeleteItem(item: TShoppingItem) {
     removeToMyList(item.id);
   }
@@ -68,6 +91,12 @@ export function ShoppingList() {
       { ...item, image: lastValuesOf(item.image.split("/"), 2).join("/") },
       true
     );
+  }
+
+  function onRecipeAdd(item: TShoppingItem) {
+    form.setValue("search", "");
+
+    addRecipesIngredientsToList([{ id: item.id }]);
   }
 
   useEffect(() => {
@@ -91,25 +120,33 @@ export function ShoppingList() {
         <Container
           style={styles.scrollContainer}
           keyboardShouldPersistTaps="always"
-          queryToRefetch={[queryAllItems, queryMyList]}
+          queryToRefetch={[queryAllItems, queryMyList, queryMiniRecipes]}
         >
           {!isSearching ? (
             <ShoppingListItem
               items={myList}
               selected={myList}
               onDelete={onDeleteItem}
+              title="Ma liste"
             />
           ) : (
-            <ShoppingListItem
-              items={items}
-              onAdd={onAddItem}
-              onDelete={onDeleteItem}
-              selected={myList}
-              proposals={
-                isSearching ? getProposalsByName(search, items) : undefined
-              }
-              onCreateProposal={onCreateItem}
-            />
+            <>
+              <ShoppingListItem
+                items={items}
+                onAdd={onAddItem}
+                onDelete={onDeleteItem}
+                selected={myList}
+                proposals={getProposalsByName(search, items)}
+                onCreateProposal={onCreateItem}
+              />
+
+              <ShoppingListItem
+                title="Recettes"
+                items={itemsRecipe}
+                onAdd={onRecipeAdd}
+                placeholder=""
+              />
+            </>
           )}
         </Container>
       </Form>

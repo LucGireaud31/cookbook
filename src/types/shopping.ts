@@ -3,6 +3,7 @@ export type TShoppingItem = {
   name: string;
   image: string;
   quantity?: number;
+  isRecipe?: boolean;
 };
 
 export type TShoppingItemBody = {

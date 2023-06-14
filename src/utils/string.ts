@@ -15,7 +15,8 @@ export function getLastOfSeparatedString(value: string, separator?: "/") {
 
 export function normalize(value: string) {
   return value
-    .toLocaleLowerCase()
+    .toLowerCase()
+    .trim()
     .replaceAll("é", "e")
     .replaceAll("è", "e")
     .replaceAll("à", "a")

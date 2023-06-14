@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Dimensions, StyleSheet, TextInput } from "react-native";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { TCreateUserSchema } from "../../../types/credentials";
 import { Button } from "../../shared/Button";
@@ -27,6 +28,13 @@ export function CreateAccount(props: CreateAccountProps) {
   const { navigate } = useNavigation();
 
   async function onSubmit({ password2, ...values }: TCreateUserSchema) {
+    if (values.login.trim().includes(" ")) {
+      Toast.show({
+        text1: "L'identifiant ne doit pas avoir d'espaces",
+        type: "error",
+      });
+      return;
+    }
     navigate("shareMyBook", { ...values });
   }
 
@@ -40,7 +48,7 @@ export function CreateAccount(props: CreateAccountProps) {
       <Form form={form}>
         <Input
           style={styles.input}
-          label="Nom d'utilisateur"
+          label="Identifiant (Nom d'utilisateur)"
           isRequired
           onSubmitEditing={() => input2.current?.focus()}
           {...form.register("login")}

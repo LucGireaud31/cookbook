@@ -18,7 +18,7 @@ export function IngredientButton({
   onPress,
   isRecipe,
   isSelected,
-  backgroundColor,
+  backgroundColor = theme[400],
   style,
 }: IngredientButtonProps) {
   return (
@@ -34,7 +34,7 @@ export function IngredientButton({
           style,
           isSelected
             ? {
-                backgroundColor: !isRecipe ? theme[400] : undefined,
+                backgroundColor: !isRecipe ? backgroundColor : undefined,
               }
             : {
                 opacity: isRecipe ? 0.8 : 1,

@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { useAllMiniRecipes } from "../../../services/recipes";
 import { useAddIngredientsRecipesInShopping } from "../../../services/shopping";
+import { TMiniRecipe } from "../../../types/recipe";
 import { TShopingRecipeToAdd } from "../../../types/shopping";
-import { toPlural } from "../../../utils/string";
+import { normalize, toPlural } from "../../../utils/string";
 import { Container } from "../../Layout/Container";
 import { Button } from "../../shared/Button";
 import { Form } from "../../shared/Form";
@@ -26,6 +27,8 @@ export function ShoppingWithRecipes(props: ShoppingWithRecipesProps) {
   const [selectedRecipes, setSelectedRecipes] = useState<TShopingRecipeToAdd[]>(
     []
   );
+  const [filteredRecipes, setFilteredRecipes] = useState<TMiniRecipe[]>([]);
+
   const nbRecipes = selectedRecipes.length;
 
   function handleIngredientPress(id: string, newStatus: boolean) {
@@ -41,6 +44,23 @@ export function ShoppingWithRecipes(props: ShoppingWithRecipesProps) {
     goBack();
   }
 
+  const currentSearch = normalize(form.watch("search"));
+
+  useEffect(() => {
+    if (data) {
+      setFilteredRecipes(
+        currentSearch.length > 0
+          ? data.filter((r) => {
+              const name = normalize(r.name);
+              return (
+                name.includes(currentSearch) || currentSearch.includes(name)
+              );
+            })
+          : data
+      );
+    }
+  }, [data, currentSearch]);
+
   return (
     <View style={styles.container}>
       <Form form={form}>
@@ -54,7 +74,7 @@ export function ShoppingWithRecipes(props: ShoppingWithRecipesProps) {
           keyboardShouldPersistTaps="always"
           queryToRefetch={[query]}
         >
-          {data?.map((recipe) => (
+          {filteredRecipes?.map((recipe) => (
             <ShoppingRecipeButton
               key={recipe.id}
               isSelected={
