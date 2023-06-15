@@ -1,6 +1,13 @@
 import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import { Checkbox } from "react-native-paper";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { tokenAtom } from "../../../Navigator";
 import { setTokenLocalStorage } from "../../../services/asyncStorage";
@@ -16,6 +23,8 @@ import { IconButton } from "../../shared/IconButton";
 import { LoginContainer } from "../LoginContainer";
 import { ScanQrCodeModal, ScanQrCodeModalRef } from "../ScanQrCodeModal";
 import { HelpModal, HelpModalRef } from "./HelpModal";
+import { A } from "@expo/html-elements";
+import Toast from "react-native-toast-message";
 
 interface ShareMyBookProps extends StackComponent {}
 
@@ -31,6 +40,8 @@ export function ShareMyBook(props: ShareMyBookProps) {
   const [account, setAccount] = useState<TCreateUser | undefined>(
     route?.params
   );
+  const [readCGU, setReadCGU] = useState(false);
+
   const setToken = useSetAtom(tokenAtom);
 
   const onCreateUser = useCreateUser();
@@ -42,6 +53,10 @@ export function ShareMyBook(props: ShareMyBookProps) {
   }
 
   async function onSubmit() {
+    if (!readCGU) {
+      Toast.show({ text1: "Veuillez accepter les CGU", type: "error" });
+      return;
+    }
     const token = route?.params.oAuth;
 
     if (token) {
@@ -124,6 +139,26 @@ export function ShareMyBook(props: ShareMyBookProps) {
               </Button>
             </>
           )}
+          <TouchableOpacity
+            onPress={() => setReadCGU(!readCGU)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 20,
+            }}
+          >
+            <Checkbox
+              status={readCGU ? "checked" : "unchecked"}
+              color={theme[400]}
+            />
+            <Text>J'ai lu et accepte les CGU</Text>
+          </TouchableOpacity>
+          <A
+            href="https://mon-livre-de-recettes.netlify.app/CGU.pdf"
+            style={{ color: theme[400], textDecorationLine: "underline" }}
+          >
+            Lire les CGU
+          </A>
         </View>
       </View>
       <ScanQrCodeModal
