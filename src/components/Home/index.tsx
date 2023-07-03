@@ -14,19 +14,17 @@ import { queryGetTags } from "../../services/tags";
 import { useForm } from "react-hook-form";
 import {
   getFilterLocalStorage,
-  getLastVersionLocalStorage,
   getPageLocalStorage,
   setFilterLocalStorage,
   setPageLocalStorage,
-  updateLastVersionLocalStorage,
 } from "../../services/asyncStorage";
 import { Form } from "../shared/Form";
 import { atom, useAtomValue } from "jotai";
-import { getCurrentProjectVersion } from "../../utils/project";
-import { getHistory } from "../../services/history";
-import { HistoryModal, HistoryModalRef } from "../History";
 import { LoadingPage } from "../shared/LoadingPage";
 import { MyFlatList } from "../shared/MyFlatList";
+import { NotificationModal, NotificationModalRef } from "../Notification";
+import { getNotifications } from "../../services/notification";
+import { getCurrentProjectVersion } from "../../utils/project";
 
 const LIST_SIZE = 1000;
 
@@ -36,7 +34,7 @@ export function Home() {
   const [page, setPage] = useState(1);
   const [pageMax, setPageMax] = useState(1);
 
-  const historyRef = useRef<HistoryModalRef>(null);
+  const notifModalRef = useRef<NotificationModalRef>(null);
 
   const navigation = useNavigation();
 
@@ -129,17 +127,11 @@ export function Home() {
 
       onRefetch(page);
 
-      // History
-      const localVersion = await getLastVersionLocalStorage();
-      const realVersion = getCurrentProjectVersion();
+      // Get notifications
+      const notifs = await getNotifications(client);
 
-      if (localVersion != realVersion) {
-        // Call api
-        const history = await getHistory(client, realVersion);
-        // Display message
-        historyRef.current?.onOpen(history);
-
-        updateLastVersionLocalStorage();
+      if (notifs?.[0]) {
+        notifModalRef.current?.onOpen(notifs[0]);
       }
     })();
   }, []);
@@ -201,7 +193,7 @@ export function Home() {
           onClose={() => setIsFilterOpen(false)}
         />
       </View>
-      <HistoryModal ref={historyRef} />
+      <NotificationModal ref={notifModalRef} />
     </Form>
   );
 }

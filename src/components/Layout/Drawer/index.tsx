@@ -1,13 +1,9 @@
-import { useApolloClient } from "@apollo/client";
 import { useSetAtom } from "jotai";
 import { ReactNode, useRef } from "react";
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { tokenAtom } from "../../../Navigator";
 import { setTokenLocalStorage } from "../../../services/asyncStorage";
-import { getHistory } from "../../../services/history";
-import { getCurrentProjectVersion } from "../../../utils/project";
-import { HistoryModal, HistoryModalRef } from "../../History";
 import {
   HistoryIcon,
   LightIcon,
@@ -18,6 +14,10 @@ import {
 import { Divider } from "../../shared/Divider";
 import { ShareHomeModal, ShareHomeModalRef } from "./ShareHomeModal";
 import * as Linking from "expo-linking";
+import { NotificationModal, NotificationModalRef } from "../../Notification";
+import { getCurrentProjectVersion } from "../../../utils/project";
+import { getNotifications } from "../../../services/notification";
+import { useApolloClient } from "@apollo/client";
 
 interface DrawerProps {}
 
@@ -31,7 +31,7 @@ export function Drawer(props: DrawerProps) {
   const setToken = useSetAtom(tokenAtom);
 
   const shareModalRef = useRef<ShareHomeModalRef>(null);
-  const historyRef = useRef<HistoryModalRef>(null);
+  const notifModalRef = useRef<NotificationModalRef>(null);
 
   function logOut() {
     setToken(null);
@@ -39,11 +39,19 @@ export function Drawer(props: DrawerProps) {
   }
 
   async function onNews() {
-    const realVersion = getCurrentProjectVersion();
+    const localVersion = getCurrentProjectVersion();
 
-    const history = await getHistory(client, realVersion);
+    const notifications = await getNotifications(client, 0);
+
     // Display message
-    historyRef.current?.onOpen(history);
+    const notif = notifications?.[0];
+    if (notif) {
+      if (localVersion == notif.version) {
+        notifModalRef.current?.onOpen(notif, "Dernière nouveauté", false);
+      } else {
+        notifModalRef.current?.onOpen(notif);
+      }
+    }
   }
 
   return (
@@ -97,7 +105,8 @@ export function Drawer(props: DrawerProps) {
         <Text style={styles.underlined}>À propos du développeur</Text>
       </TouchableOpacity>
       <ShareHomeModal ref={shareModalRef} />
-      <HistoryModal ref={historyRef} />
+      {/* <HistoryModal ref={historyRef} /> */}
+      <NotificationModal ref={notifModalRef} />
     </View>
   );
 }

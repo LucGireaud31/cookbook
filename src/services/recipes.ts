@@ -55,14 +55,9 @@ export interface FilterProps {
 }
 
 export function useRecipesPagination() {
-  try {
-    const { data, ...rest } = useQuery<TUserRecipes>(queryGetRecipes);
+  const { data, ...rest } = useQuery<TUserRecipes>(queryGetRecipes);
 
-    return { data: data?.recipes, query: queryGetRecipes, ...rest };
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
+  return { data: data?.recipes, query: queryGetRecipes, ...rest };
 }
 
 // -------------------- //

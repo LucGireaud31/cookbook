@@ -1,6 +1,6 @@
 {
   "name": "Mon livre de recettes",
-  "version": "1.2.0",
+  "version": "1",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",

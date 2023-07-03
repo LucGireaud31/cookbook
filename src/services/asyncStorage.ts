@@ -8,6 +8,7 @@ enum KeysEnum {
   Token = "token",
   Login = "login",
   LastVersion = "last-version",
+  LastOnceNotifId = "last-loop-notif-id",
 }
 
 // ---------- //
@@ -59,11 +60,13 @@ export async function getLoginLocalStorage(): Promise<string | null> {
   }
 }
 
-export async function getLastVersionLocalStorage(): Promise<string> {
+export async function getLastOnceNotifId(): Promise<number> {
   try {
-    return (await AsyncStorage.getItem(KeysEnum.LastVersion)) ?? "";
+    return parseInt(
+      (await AsyncStorage.getItem(KeysEnum.LastOnceNotifId)) ?? "0"
+    );
   } catch {
-    return "";
+    return 0;
   }
 }
 
@@ -96,10 +99,8 @@ export async function setTokenLocalStorage(token: string | null) {
   } catch {}
 }
 
-export async function updateLastVersionLocalStorage() {
-  const currentVersion = getCurrentProjectVersion();
+export async function setLastOnceNotifId(id: number) {
   try {
-    await AsyncStorage.setItem(KeysEnum.LastVersion, currentVersion);
-    return currentVersion;
+    await AsyncStorage.setItem(KeysEnum.LastOnceNotifId, id.toString());
   } catch {}
 }
