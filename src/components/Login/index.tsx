@@ -6,7 +6,9 @@ import { Form } from "../shared/Form";
 import Toast from "react-native-toast-message";
 import { useLogin } from "../../services/credentials";
 import {
+  getDownloadStepKey,
   getLoginLocalStorage,
+  setDownloadStepKey,
   setLoginLocalStorage,
   setTokenLocalStorage,
 } from "../../services/asyncStorage";
@@ -22,6 +24,8 @@ import { Divider } from "../shared/Divider";
 import { GoogleConnectionButton } from "./GoogleConnectionButton";
 import { ConnexionButton } from "../shared/ConnexionButton";
 import { LoadingPage } from "../shared/LoadingPage";
+import { generateUID } from "../../utils/crypto";
+import { useSetDownloadStep } from "../../services/downloadService";
 
 interface LoginProps {}
 
@@ -33,6 +37,7 @@ export function Login(props: LoginProps) {
   });
 
   const [isLoadingOAuth, setIsLoadingOAuth] = useState(false);
+  const setDownloadStep = useSetDownloadStep();
 
   const doLogin = useLogin();
   const setToken = useSetAtom(tokenAtom);
@@ -77,6 +82,15 @@ export function Login(props: LoginProps) {
   useEffect(() => {
     (async () => {
       form.setValue("login", (await getLoginLocalStorage()) ?? "");
+    })();
+    (async () => {
+      const localKey = await getDownloadStepKey();
+      if (!localKey) {
+        const key = generateUID();
+
+        await setDownloadStepKey(key);
+        await setDownloadStep(1, key);
+      }
     })();
   }, []);
 

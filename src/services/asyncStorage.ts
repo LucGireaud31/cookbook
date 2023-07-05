@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getCurrentProjectVersion } from "../utils/project";
 import { FilterProps } from "./recipes";
 
 enum KeysEnum {
@@ -9,6 +8,8 @@ enum KeysEnum {
   Login = "login",
   LastVersion = "last-version",
   LastOnceNotifId = "last-loop-notif-id",
+  DownloadStepKey = "download-step-key",
+  DownloadStep = "download-step",
 }
 
 // ---------- //
@@ -69,6 +70,21 @@ export async function getLastOnceNotifId(): Promise<number> {
     return 0;
   }
 }
+export async function getDownloadStepKey(): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(KeysEnum.DownloadStepKey);
+  } catch {
+    return null;
+  }
+}
+
+export async function getDownloadStep(): Promise<number | null> {
+  try {
+    return parseInt((await AsyncStorage.getItem(KeysEnum.DownloadStep)) ?? "0");
+  } catch {
+    return null;
+  }
+}
 
 // ---------- //
 // --Set-- //
@@ -102,5 +118,16 @@ export async function setTokenLocalStorage(token: string | null) {
 export async function setLastOnceNotifId(id: number) {
   try {
     await AsyncStorage.setItem(KeysEnum.LastOnceNotifId, id.toString());
+  } catch {}
+}
+export async function setDownloadStepKey(key: string) {
+  try {
+    await AsyncStorage.setItem(KeysEnum.DownloadStepKey, key);
+  } catch {}
+}
+
+export async function setDownloadStep(step: number) {
+  try {
+    await AsyncStorage.setItem(KeysEnum.DownloadStep, step.toString());
   } catch {}
 }

@@ -8,3 +8,7 @@ export function generateShortUID() {
     ("000" + secondPart.toString(36)).slice(-3)
   );
 }
+
+export function generateUID() {
+  return "CB_" + Math.random().toString(32) + Math.random().toString(32);
+}

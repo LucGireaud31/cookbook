@@ -13,6 +13,7 @@ import { FilterModal } from "./FilterModal";
 import { queryGetTags } from "../../services/tags";
 import { useForm } from "react-hook-form";
 import {
+  getDownloadStep,
   getFilterLocalStorage,
   getPageLocalStorage,
   setFilterLocalStorage,
@@ -24,7 +25,7 @@ import { LoadingPage } from "../shared/LoadingPage";
 import { MyFlatList } from "../shared/MyFlatList";
 import { NotificationModal, NotificationModalRef } from "../Notification";
 import { getNotifications } from "../../services/notification";
-import { getCurrentProjectVersion } from "../../utils/project";
+import { useSetDownloadStep } from "../../services/downloadService";
 
 const LIST_SIZE = 1000;
 
@@ -54,6 +55,7 @@ export function Home() {
     query: queryGetTypes,
     loading: loadingTypes,
   } = useTypes();
+  const setDownloadStep = useSetDownloadStep();
 
   const [recipes, setRecipes] = useState<TRecipeItem[] | null>(null);
 
@@ -132,6 +134,12 @@ export function Home() {
 
       if (notifs?.[0]) {
         notifModalRef.current?.onOpen(notifs[0]);
+      }
+    })();
+    (async () => {
+      const step = await getDownloadStep();
+      if (step != 2) {
+        setDownloadStep(2);
       }
     })();
   }, []);
