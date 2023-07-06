@@ -24,7 +24,8 @@ export function normalize(value: string) {
     .replaceAll("ù", "u")
     .replaceAll("â", "a")
     .replaceAll("î", "i")
-    .replaceAll("ï", "i");
+    .replaceAll("ï", "i")
+    .replaceAll("ê", "e");
 }
 
 export function noramalizedCompare(s1: string, s2: string) {

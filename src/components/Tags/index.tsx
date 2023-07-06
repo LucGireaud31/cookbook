@@ -78,7 +78,11 @@ export function Tags(props: TagsProps) {
           <GlassIcon />
         </TouchableOpacity>
       </View>
-      <Container style={styles.tagContainer} queryToRefetch={query}>
+      <Container
+        style={styles.tagContainer}
+        queryToRefetch={query}
+        keyboardShouldPersistTaps
+      >
         {filteredTags.length == 0 && (
           <Text style={styles.noData}>Aucun tag</Text>
         )}

@@ -26,6 +26,7 @@ import { MyFlatList } from "../shared/MyFlatList";
 import { NotificationModal, NotificationModalRef } from "../Notification";
 import { getNotifications } from "../../services/notification";
 import { useSetDownloadStep } from "../../services/downloadService";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const LIST_SIZE = 1000;
 
@@ -182,6 +183,7 @@ export function Home() {
         <Container
           style={styles.recipesContainer}
           queryToRefetch={[queryRecipes, queryGetTypes, queryGetTags]}
+          keyboardShouldPersistTaps={true}
         >
           {recipes?.length == 0 && (
             <Text style={styles.noData}>Aucune recette</Text>

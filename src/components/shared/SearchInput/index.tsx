@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useController } from "react-hook-form";
 import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { useDebounce } from "../../../hooks/useDebounce";
 import { gray, theme } from "../../../theme/colors";
 import { FilterIcon, GlassIcon } from "../../icons/icons";
 import { InputFormProps } from "../Form";
@@ -16,6 +18,17 @@ export function SearchInput(props: SearchInputProps) {
 
   const { field } = useController({ name });
 
+  const [search, setSearch] = useState<string>();
+
+  const searchDebounce = useDebounce(search, 300);
+
+  useEffect(() => {
+    if (searchDebounce != undefined) {
+      field.onChange(searchDebounce);
+      onSubmit();
+    }
+  }, [searchDebounce]);
+
   return (
     <View style={styles.container}>
       <View
@@ -28,8 +41,10 @@ export function SearchInput(props: SearchInputProps) {
           style={styles.inputText}
           placeholder={placeholder ?? "Rechercher une recette..."}
           placeholderTextColor={gray[300]}
-          value={field.value}
-          onChangeText={field.onChange}
+          value={search}
+          onChangeText={(text) => {
+            setSearch(text);
+          }}
           onSubmitEditing={onSubmit}
         />
         <IconButton icon={<GlassIcon />} onPress={onSubmit} />

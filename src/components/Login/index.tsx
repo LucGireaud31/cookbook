@@ -85,6 +85,7 @@ export function Login(props: LoginProps) {
     })();
     (async () => {
       const localKey = await getDownloadStepKey();
+
       if (!localKey) {
         const key = generateUID();
 
