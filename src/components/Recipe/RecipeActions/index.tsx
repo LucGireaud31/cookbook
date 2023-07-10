@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { DotMenuIcon } from "../../icons/icons";
 import { Menu, Divider } from "react-native-paper";
 import { useRef, useState } from "react";
@@ -12,6 +12,8 @@ import {
   DisplayRecipePdfLoaderModal,
   DisplayRecipePdfLoaderModalRef,
 } from "./DisplayRecipePdfLoaderModal";
+import { useAddIngredientsRecipesInShopping } from "../../../services/shopping";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 interface RecipeActionProps {
   recipe: TRecipe;
@@ -30,6 +32,7 @@ export function RecipeAction(props: RecipeActionProps) {
   const closeMenu = () => setVisible(false);
 
   const deleteRecipeMutation = useDeleteRecipe();
+  const addIngredientsToShoppingList = useAddIngredientsRecipesInShopping();
 
   const navigation = useNavigation();
 
@@ -76,6 +79,18 @@ export function RecipeAction(props: RecipeActionProps) {
           }}
           title="Afficher en pdf"
           leadingIcon={"file"}
+        />
+        <Menu.Item
+          onPress={() => {
+            closeMenu();
+            addIngredientsToShoppingList([{ id: recipe.id }]);
+            Toast.show({
+              text1: "Ingrédients ajoutés avec succès",
+              type: "success",
+            });
+          }}
+          title="Ajouter aux courses"
+          leadingIcon={"cart"}
         />
         <Divider />
         <Menu.Item

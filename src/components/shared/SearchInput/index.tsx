@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 import { useController } from "react-hook-form";
 import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useDebounce } from "../../../hooks/useDebounce";
@@ -9,25 +9,42 @@ import { IconButton } from "../IconButton";
 
 interface SearchInputProps extends InputFormProps {
   onFilter?(): void;
-  onSubmit(): void;
+  onSubmit?(): void;
   placeholder?: string;
+  inputRef?: RefObject<TextInput>;
+  defaultSearch?: string;
+  debounced?: number;
 }
 
 export function SearchInput(props: SearchInputProps) {
-  const { onFilter, onSubmit, name = "", placeholder } = props;
+  const {
+    onFilter,
+    onSubmit,
+    name = "",
+    placeholder,
+    inputRef,
+    defaultSearch,
+    debounced = 300,
+  } = props;
 
   const { field } = useController({ name });
 
   const [search, setSearch] = useState<string>();
 
-  const searchDebounce = useDebounce(search, 300);
+  const searchDebounce = useDebounce(search, debounced);
 
   useEffect(() => {
     if (searchDebounce != undefined) {
       field.onChange(searchDebounce);
-      onSubmit();
+      onSubmit?.();
     }
   }, [searchDebounce]);
+
+  useEffect(() => {
+    if (defaultSearch != undefined) {
+      setSearch(defaultSearch);
+    }
+  }, [defaultSearch]);
 
   return (
     <View style={styles.container}>
@@ -38,6 +55,7 @@ export function SearchInput(props: SearchInputProps) {
         }}
       >
         <TextInput
+          ref={inputRef}
           style={styles.inputText}
           placeholder={placeholder ?? "Rechercher une recette..."}
           placeholderTextColor={gray[300]}

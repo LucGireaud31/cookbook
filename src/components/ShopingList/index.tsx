@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { useNavigation } from "../../hooks/useNavigation";
 import { useAllMiniRecipes } from "../../services/recipes";
 import {
@@ -13,14 +13,13 @@ import {
 } from "../../services/shopping";
 import { TShoppingItem, TShoppingItemBody } from "../../types/shopping";
 import { lastValuesOf } from "../../utils/list";
+import { sleep } from "../../utils/promise";
 import {
   formatImageUrlForDatabase,
   getProposalsByName,
 } from "../../utils/shopping";
 import { normalize } from "../../utils/string";
-import { CaretIcon } from "../icons/icons";
 import { Container } from "../Layout/Container";
-import { Button } from "../shared/Button";
 import { Form } from "../shared/Form";
 import { LoadingPage } from "../shared/LoadingPage";
 import { SearchInput } from "../shared/SearchInput";
@@ -29,6 +28,8 @@ import { ShoppingMenuHeader } from "./ShoppingMenuHeader";
 
 export function ShoppingList() {
   const navigation = useNavigation();
+
+  const searchRef = useRef<TextInput>(null);
 
   const { data: allItems, query: queryAllItems } = useShoppingItems();
   const { data: miniRecipes, query: queryMiniRecipes } = useAllMiniRecipes({
@@ -45,6 +46,9 @@ export function ShoppingList() {
   const form = useForm<{ search: string }>({ defaultValues: { search: "" } });
 
   const search = form.watch("search");
+
+  const [defaultSearch, setDefaultSearch] = useState<string>();
+
   const isSearching = search.length >= 2;
 
   const searchNormalized = normalize(search);
@@ -80,12 +84,13 @@ export function ShoppingList() {
   }
 
   function onAddItem(item: TShoppingItem) {
-    form.setValue("search", "");
+    onItemClick();
+
     addToMyList(formatImageUrlForDatabase([item]));
   }
 
   function onCreateItem(item: TShoppingItemBody) {
-    form.setValue("search", "");
+    onItemClick();
 
     createItem(
       { ...item, image: lastValuesOf(item.image.split("/"), 2).join("/") },
@@ -94,9 +99,18 @@ export function ShoppingList() {
   }
 
   function onRecipeAdd(item: TShoppingItem) {
-    form.setValue("search", "");
-
+    onItemClick();
     addRecipesIngredientsToList([{ id: item.id }]);
+  }
+
+  async function onItemClick() {
+    form.setValue("search", "");
+    searchRef?.current?.focus();
+    setDefaultSearch(undefined);
+
+    await sleep(1);
+
+    setDefaultSearch("");
   }
 
   useEffect(() => {
@@ -113,9 +127,11 @@ export function ShoppingList() {
     <View style={styles.container}>
       <Form form={form}>
         <SearchInput
-          onSubmit={() => {}}
+          inputRef={searchRef}
           {...form.register("search")}
+          debounced={0}
           placeholder="Que voulez-vous acheter ?"
+          defaultSearch={defaultSearch}
         />
         <Container
           style={styles.scrollContainer}
