@@ -1,8 +1,7 @@
 import { capitalize } from "lodash";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
-import { ENV } from "../../../../env";
 import { useIngredients } from "../../../services/ingredients";
 import { useAllMiniRecipes } from "../../../services/recipes";
 import { theme } from "../../../theme/colors";
@@ -20,10 +19,18 @@ import { Input } from "./Input";
 interface RichSelectProps extends InputFormProps {
   mappedIngredients?: string[];
   onSubmit?(unities: number[]): void;
+  defaultSearch?: string;
+  inputRef?: React.RefObject<TextInput>;
 }
 
 export function RichSelect(props: RichSelectProps) {
-  const { isRequired, mappedIngredients = [], ...rest } = props;
+  const {
+    isRequired,
+    mappedIngredients = [],
+    defaultSearch,
+    inputRef: ref,
+    ...rest
+  } = props;
 
   const { data } = useIngredients();
   const { data: dependencies } = useAllMiniRecipes();
@@ -49,6 +56,12 @@ export function RichSelect(props: RichSelectProps) {
 
   const defaultId = useMemo(() => getValues("id"), []);
 
+  useEffect(() => {
+    if (defaultSearch != undefined) {
+      setSearch(defaultSearch);
+    }
+  }, [defaultSearch]);
+
   useController({
     name: "id",
     rules: {
@@ -56,7 +69,7 @@ export function RichSelect(props: RichSelectProps) {
     },
   });
 
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = ref ?? useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
 
   const selectedId = watch("id");
@@ -119,7 +132,7 @@ export function RichSelect(props: RichSelectProps) {
       handleIngredientPress(
         ing.id,
         ing.name,
-        ing.image,
+        ing.image ?? "",
         ing.unities,
         ing.isRecipe,
         (ing as any).plural
@@ -199,12 +212,12 @@ export function RichSelect(props: RichSelectProps) {
             <IngredientButton
               key={ing.id}
               name={ing.name}
-              image={ing.image}
+              image={ing.image ?? ""}
               onPress={() => {
                 handleIngredientPress(
                   ing.id,
                   ing.name,
-                  ing.image,
+                  ing.image ?? "",
                   ing.unities,
                   ing.isRecipe,
                   (ing as any).plural

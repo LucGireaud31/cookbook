@@ -1,6 +1,6 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import { TRecipeIngredient } from "../../types/ingredients";
 import { RecipeQuantityTypeEnum } from "../../types/recipe";
 import { ingredientsUnitOptions } from "../../utils/ingredientQuantityType";
@@ -14,6 +14,8 @@ import {
   useIngredients,
 } from "../../services/ingredients";
 import { lastValueOf } from "../../utils/list";
+import { sleep } from "../../utils/promise";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export interface ModalAddIngredientToRecipeRef {
   onOpen(ingredient?: TRecipeIngredient): void;
@@ -52,6 +54,9 @@ export const ModalAddIngredientToRecipe = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
 
   // const [unities, setUnities] = useState<number[]>([]);
+  const [defaultSearch, setDefaultSearch] = useState<string>();
+
+  const searchRef = useRef<TextInput>(null);
 
   const { data: ingredients } = useIngredients();
   const createIngredient = useCreateIngredient();
@@ -61,9 +66,10 @@ export const ModalAddIngredientToRecipe = forwardRef<
   const form = useForm<TRecipeIngredient>();
 
   useImperativeHandle(ref, () => ({
-    onOpen: (ingredient?: TRecipeIngredient) => {
+    onOpen: async (ingredient?: TRecipeIngredient) => {
       setIsOpen(true);
       setDefaultIngredient(ingredient);
+      setDefaultSearch(ingredient?.name ?? "");
 
       // setUnities(
       //   ingredient?.isRecipe
@@ -78,11 +84,14 @@ export const ModalAddIngredientToRecipe = forwardRef<
         form.reset(ingredient);
       } else {
         form.reset(DEFAULT_INGREDIENT);
+
+        await sleep(100);
+        searchRef.current?.focus();
       }
     },
   }));
 
-  async function handleSubmit(ing: TRecipeIngredient) {
+  async function handleSubmit(ing: TRecipeIngredient, closeOnEnd?: boolean) {
     let values = ing;
     if (
       !ing.isRecipe &&
@@ -100,8 +109,6 @@ export const ModalAddIngredientToRecipe = forwardRef<
       if (newIngredient) values.id = newIngredient?.id;
     }
 
-    setIsOpen(false);
-
     const newValues = {
       ...values,
       quantity: {
@@ -115,6 +122,17 @@ export const ModalAddIngredientToRecipe = forwardRef<
     } else {
       onAdd(newValues);
     }
+
+    if (closeOnEnd) {
+      setIsOpen(false);
+    } else {
+      form.reset(DEFAULT_INGREDIENT);
+      setDefaultSearch(undefined);
+
+      searchRef.current?.focus();
+
+      setDefaultSearch("");
+    }
   }
 
   const isRecipe = form.getValues("isRecipe");
@@ -126,15 +144,26 @@ export const ModalAddIngredientToRecipe = forwardRef<
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
       title="Ingrédient"
-      onSubmit={form.handleSubmit(handleSubmit)}
+      onButton2Press={form.handleSubmit((data) => handleSubmit(data, true))}
       isSubmitting={form.formState.isSubmitting}
-      submitButtonLabel={defaultIngredient ? "Modifier" : "Ajouter"}
+      {...(defaultIngredient
+        ? {
+            button2Label: "Modifier",
+          }
+        : {
+            submitButtonLabel: "Ajouter et continuer",
+            button2Label: "Ajouter et fermer",
+            onSubmit: form.handleSubmit((data) => handleSubmit(data, false)),
+            fontSizeButtons: 12,
+          })}
     >
       <Form form={form}>
         <RichSelect
+          inputRef={searchRef}
           label="Ingrédient"
           isRequired
           mappedIngredients={mappedIngredients}
+          defaultSearch={defaultSearch}
           //onSubmit={setUnities}
         />
         <Select

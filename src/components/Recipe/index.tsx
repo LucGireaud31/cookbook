@@ -49,7 +49,7 @@ export function Recipe(props: RecipeProps) {
     if (!recipe) {
       !isModal &&
         navigation.setOptions({
-          title: wrapText(route?.params.name ?? "", 20),
+          title: wrapText(route?.params.name ?? "", 30),
         });
 
       return;
@@ -57,7 +57,7 @@ export function Recipe(props: RecipeProps) {
 
     !isModal &&
       navigation.setOptions({
-        title: wrapText(recipe.name, 20),
+        title: recipe.name.substring(0, 25),
         headerRight: () => <RecipeAction recipe={recipe} />,
       });
 
@@ -99,6 +99,9 @@ export function Recipe(props: RecipeProps) {
     <Container queryToRefetch={query} keyboardShouldPersistTaps="always">
       <View style={styles.header}>
         <View style={styles.top}>
+          {recipe.name.length > 25 && (
+            <Text style={styles.recipeName}>{recipe.name.substring(25)}</Text>
+          )}
           <View style={styles.imageContainer}>
             <Image style={styles.imageProfil} source={{ uri: recipe.image }} />
           </View>
@@ -244,6 +247,15 @@ const styles = StyleSheet.create({
   top: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  recipeName: {
+    fontWeight: "600",
+    color: theme[400],
+    textAlign: "center",
+    marginHorizontal: 30,
+    fontSize: 20,
+    marginBottom: 30,
+    marginTop: -8,
   },
   imageContainer: {
     width: 100,

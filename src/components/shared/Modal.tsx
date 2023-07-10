@@ -33,6 +33,7 @@ interface ModalComponentProps extends ModalProps {
   titleStyle?: StyleProp<TextStyle>;
   overlayStyle?: StyleProp<ViewStyle>;
   isSubmitting?: boolean;
+  fontSizeButtons?: number;
 }
 
 export function Modal(props: ModalComponentProps) {
@@ -53,6 +54,7 @@ export function Modal(props: ModalComponentProps) {
     button2Label = "Annuler",
     button2Style = {},
     isSubmitting = false,
+    fontSizeButtons,
     ...rest
   } = props;
 
@@ -79,6 +81,7 @@ export function Modal(props: ModalComponentProps) {
               onPress={onButton2Press}
               style={{ ...styles.button2, ...(button2Style as any) }}
               color="black"
+              fontSize={fontSizeButtons}
             >
               {button2Label}
             </Button>
@@ -88,6 +91,7 @@ export function Modal(props: ModalComponentProps) {
               onPress={onSubmit}
               isSubmiting={isSubmitting}
               style={{ ...styles.button, ...(buttonStyle as any) }}
+              fontSize={fontSizeButtons}
             >
               {submitButtonLabel}
             </Button>

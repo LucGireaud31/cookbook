@@ -183,7 +183,7 @@ export function Home() {
         <Container
           style={styles.recipesContainer}
           queryToRefetch={[queryRecipes, queryGetTypes, queryGetTags]}
-          keyboardShouldPersistTaps={true}
+          keyboardShouldPersistTaps="always"
         >
           {recipes?.length == 0 && (
             <Text style={styles.noData}>Aucune recette</Text>
